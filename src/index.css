@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  /* 2.1 Core Palette */
+  --color-brand-primary: #2FA084;
+  --color-brand-secondary: #1F6F5F;
+  --color-brand-success: #6FCF97;
+  --color-brand-mint: #D1F2EB;
+  
+  --color-surface-page: #EEEEEE;
+  --color-surface-card: #FFFFFF;
+  
+  --color-text-primary: #1F6F5F;
+  --color-text-body: #4A5568;
+  --color-text-muted: #A0AEC0;
+
+  /* 2.2 Semantic Colors */
+  --color-danger: #E53E3E;
+  --color-warning: #F57F17;
+  --color-info: #3182CE;
+
+  /* 4.4 Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+}
+
+/* 3.1 Font Family */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@layer base {
+  body {
+    @apply bg-surface-page font-sans text-text-body;
+    font-family: 'Inter', sans-serif;
+  }
+}
