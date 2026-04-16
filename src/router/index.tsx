@@ -1,5 +1,7 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter,Outlet } from 'react-router-dom'
 import { ROUTES } from '../utils/constants'
+import PageWrapper from '../components/layout/PageWrapper';
+
 
 import LoginPage         from '../pages/auth/LoginPage'
 import RegisterPage      from '../pages/auth/RegisterPage'
@@ -23,7 +25,19 @@ import CategoryBrowsePage from '../pages/home/CategoryBrowsePage'
 
 import NotFoundPage      from '../pages/error/NotFoundPage'
 
+
 export const router = createBrowserRouter([
+
+  {
+    path: '/',
+    element: (
+      <PageWrapper>
+        <Outlet /> 
+      </PageWrapper>
+    ),
+    children: [
+
+
   { path: ROUTES.HOME,            element: <HomePage /> },
   { path: ROUTES.LOGIN,           element: <LoginPage /> },
   { path: ROUTES.REGISTER,        element: <RegisterPage /> },
@@ -41,4 +55,6 @@ export const router = createBrowserRouter([
   { path: ROUTES.CATEGORY,        element: <CategoryBrowsePage /> },
   { path: ROUTES.NOT_FOUND,       element: <NotFoundPage /> },
   {path: ROUTES.DELETE_ACCOUNT, element: <DeleteAccountPage /> },
+    ],
+  },
 ])

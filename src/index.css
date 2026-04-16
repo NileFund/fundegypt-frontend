@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -6,10 +7,10 @@
   --color-brand-secondary: #1F6F5F;
   --color-brand-success: #6FCF97;
   --color-brand-mint: #D1F2EB;
-  
+
   --color-surface-page: #EEEEEE;
   --color-surface-card: #FFFFFF;
-  
+
   --color-text-primary: #1F6F5F;
   --color-text-body: #4A5568;
   --color-text-muted: #A0AEC0;
@@ -27,11 +28,55 @@
 }
 
 /* 3.1 Font Family */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @layer base {
   body {
     @apply bg-surface-page font-sans text-text-body;
     font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .glass-shine {
+    background: rgba(10, 45, 38, 0.9) !important;
+    backdrop-filter: blur(34px) !important;
+    -webkit-backdrop-filter: blur(34px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.5),
+      0 10px 20px -5px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 0 10px rgba(0, 0, 0, 0.2) !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.6),
+        transparent);
+    z-index: 10;
+  }
+
+  .glass-shine::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg,
+        rgba(255, 255, 255, 0.6),
+        transparent,
+        rgba(255, 255, 255, 0.2));
+    z-index: 10;
   }
 }
