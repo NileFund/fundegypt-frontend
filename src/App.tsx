@@ -14,15 +14,13 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-
     <QueryClientProvider client={queryClient}>
-      {/* <AuthProvider> */}
-        {/* <ToastProvider> */}
-          <RouterProvider router={router} />
-        {/* </ToastProvider> */}
-      {/* </AuthProvider> */}
+      <RouterProvider router={router} />
     </QueryClientProvider>
   );
 }
+
+
+
   
 export default App
