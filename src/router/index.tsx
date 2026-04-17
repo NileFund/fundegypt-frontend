@@ -13,7 +13,6 @@ import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
 import ProfilePage from "../pages/profile/ProfilePage";
 import AboutTab from "../pages/profile/components/AboutTab";
 import MyDonationsTab from "../pages/profile/components/MyDonationsTab";
-//import EditProfilePage from "../pages/profile/components/EditProfileModal";
 import MyProjectsTab from "../pages/profile/components/MyProjectsTab";
 
 // Projects
@@ -38,35 +37,31 @@ export const router = createBrowserRouter([
     ),
     children: [
       { path: ROUTES.HOME, element: <HomePage /> },
-
-      {
-        path: ROUTES.PROFILE,
-        element: <ProfilePage />,
-        children: [
-          // This renders by default when they go to /profile
-          { index: true, element: <AboutTab /> },
-          // These render inside ProfilePage when the URL changes
-          {
-            path: ROUTES.MY_DONATIONS,
-            element: <MyDonationsTab />,
-          },
-          { path: ROUTES.MY_PROJECTS, element: <MyProjectsTab /> },
-          {
-            /*path: ROUTES.EDIT_PROFILE, element: <EditProfilePage /> */
-          },
-        ],
-      },
-
       { path: ROUTES.EXPLORE, element: <ExplorePage /> },
       { path: ROUTES.PROJECT_DETAIL, element: <ProjectDetailPage /> },
       { path: ROUTES.CREATE_PROJECT, element: <CreateProjectPage /> },
       { path: ROUTES.EDIT_PROJECT, element: <EditProjectPage /> },
       { path: ROUTES.SEARCH, element: <SearchResultsPage /> },
       { path: ROUTES.CATEGORY, element: <CategoryBrowsePage /> },
+
+      {
+        path: ROUTES.PROFILE,
+        element: <ProfilePage />,
+        children: [
+          { index: true, element: <AboutTab /> },
+          { path: ROUTES.MY_DONATIONS, element: <MyDonationsTab /> },
+          { path: ROUTES.MY_PROJECTS, element: <MyProjectsTab /> },
+
+          { path: ROUTES.EDIT_PROFILE, element: <AboutTab /> },
+          { path: ROUTES.DELETE_ACCOUNT, element: <AboutTab /> },
+        ],
+      },
+
       { path: ROUTES.NOT_FOUND, element: <NotFoundPage /> },
     ],
   },
-  // Auth routes
+
+  // Auth pages
   { path: ROUTES.LOGIN, element: <LoginPage /> },
   { path: ROUTES.REGISTER, element: <RegisterPage /> },
   { path: ROUTES.ACTIVATE, element: <ActivationPage /> },
