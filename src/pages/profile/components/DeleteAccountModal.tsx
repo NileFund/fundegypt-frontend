@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { X, AlertTriangle } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // Added for routing
+import { useAuth } from "../../../context/useAuth"; // Adjust path to your auth context
+import { deleteAccount } from "../../../services/authService"; // Adjust path to your API services
 
 interface DeleteAccountModalProps {
   onClose: () => void;
@@ -9,6 +12,10 @@ export default function DeleteAccountModal({ onClose }: DeleteAccountModalProps)
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Bring in global logout and navigation
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,47 +29,40 @@ export default function DeleteAccountModal({ onClose }: DeleteAccountModalProps)
     setIsLoading(true);
 
     try {
-      // TODO: Replace with your actual Axios call to your Django API
-      // await axios.delete('/api/accounts/me/delete/', { data: { password } });
+      // 1. Call the real Django endpoint to delete the user record
+      await deleteAccount(password);
 
-      // Simulating network request...
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (password === "password123") {
-            // Fake successful password
-            resolve(true);
-          } else {
-            reject(new Error("Incorrect password."));
-          }
-        }, 1500);
-      });
+      // 2. Clear local storage tokens and reset the AuthContext state
+      await logout();
 
-      // If successful, log the user out and redirect to home
-      // authCtx.logout();
-      // navigate('/');
-      alert("Account successfully deleted. Redirecting to home...");
+      // 3. Redirect back to the landing page
+      navigate("/");
+
+      // Optional: Close modal (though the component will likely unmount on redirect)
       onClose();
     } catch (err: any) {
-      setError(err.message || "Something went wrong. Please try again.");
+      // Safely extract Django's error message (e.g., "Incorrect password")
+      const backendError = err.response?.data?.detail || err.response?.data?.error;
+      setError(backendError || "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    // Overlay: rgba(0,0,0,0.5)
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-      {/* Modal Container: Max width 480px, bg white, 16px radius, shadow */}
-      <div className="bg-white rounded-[16px] w-full max-w-[480px] shadow-[0_8px_24px_rgba(0,0,0,0.15)] overflow-hidden animate-in zoom-in-95 duration-200">
+    // Overlay: Deepened to a darker blur to fit the cyberpunk aesthetic
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md animate-in fade-in duration-200">
+      {/* Modal Container: Warm dark slate with subtle orange glow border */}
+      <div className="bg-[#0f172a] border border-orange-500/20 rounded-[16px] w-full max-w-[480px] shadow-[0_0_30px_rgba(249,115,22,0.15)] overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-100">
-          <h3 className="text-lg font-semibold text-[#1F6F5F] flex items-center">
-            <AlertTriangle size={20} className="text-[#E53E3E] mr-2" />
+        <div className="flex justify-between items-center p-6 border-b border-slate-800">
+          <h3 className="text-lg font-semibold text-orange-500 flex items-center">
+            <AlertTriangle size={20} className="text-red-500 mr-2 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
             Delete Account
           </h3>
           <button
             onClick={onClose}
-            className="text-[#A0AEC0] hover:text-[#4A5568] transition-colors p-1 rounded-md hover:bg-gray-100"
+            className="text-slate-500 hover:text-orange-400 transition-colors p-1 rounded-md hover:bg-slate-800"
             aria-label="Close dialog"
             disabled={isLoading}>
             <X size={20} />
@@ -72,16 +72,16 @@ export default function DeleteAccountModal({ onClose }: DeleteAccountModalProps)
         {/* Body */}
         <form onSubmit={handleDelete}>
           <div className="p-6 space-y-4">
-            <p className="text-[#4A5568] text-sm leading-relaxed">
+            <p className="text-slate-300 text-sm leading-relaxed">
               Are you sure you want to delete your account? This action will hide your profile and cancel any active
               campaigns. For financial security, your past donation records will be anonymized after 30 days.
             </p>
-            <p className="text-[#4A5568] text-sm font-medium">
-              This action <span className="text-[#E53E3E] font-bold">cannot</span> be undone.
+            <p className="text-slate-300 text-sm font-medium">
+              This action <span className="text-red-500 font-bold">cannot</span> be undone.
             </p>
 
             <div className="pt-2">
-              <label htmlFor="password" className="block text-sm font-medium text-[#4A5568] mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-orange-400/80 mb-1.5">
                 Confirm your password
               </label>
               <input
@@ -91,31 +91,31 @@ export default function DeleteAccountModal({ onClose }: DeleteAccountModalProps)
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 disabled={isLoading}
-                className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-[#4A5568] placeholder:text-[#A0AEC0] focus:outline-none focus:ring-2 transition-colors duration-200 ${
+                className={`w-full bg-[#1e293b] rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all duration-200 ${
                   error
-                    ? "border-[#E53E3E] focus:border-[#E53E3E] focus:ring-[#E53E3E]/20"
-                    : "border-gray-200 focus:border-[#2FA084] focus:ring-[#2FA084]/20"
+                    ? "border border-red-500/50 focus:border-red-500 focus:ring-red-500/20"
+                    : "border border-slate-700 focus:border-orange-500 focus:ring-orange-500/20"
                 }`}
               />
               {error && (
-                <p className="mt-1.5 text-xs text-[#E53E3E] font-medium animate-in slide-in-from-top-1">{error}</p>
+                <p className="mt-1.5 text-xs text-red-400 font-medium animate-in slide-in-from-top-1">{error}</p>
               )}
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
+          <div className="flex justify-end gap-3 px-6 py-4 bg-[#0B1120] border-t border-slate-800">
             <button
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[#4A5568] hover:bg-gray-200 transition-colors disabled:opacity-50">
+              className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors disabled:opacity-50">
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-[#E53E3E] hover:bg-[#C53030] text-white font-medium text-sm px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center min-w-[140px] disabled:opacity-70 disabled:cursor-not-allowed">
+              className="bg-red-600/90 hover:bg-red-500 text-white shadow-[0_0_15px_rgba(220,38,38,0.4)] font-medium text-sm px-6 py-2 rounded-lg transition-all duration-200 flex items-center justify-center min-w-[140px] disabled:opacity-70 disabled:cursor-not-allowed">
               {isLoading ? (
                 <span className="flex items-center">
                   <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
