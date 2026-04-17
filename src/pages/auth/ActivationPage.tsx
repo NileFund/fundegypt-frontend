@@ -27,12 +27,12 @@ const ActivationPage = () => {
         const response = await api.get(`/accounts/activate/${uid}/${token}/`);
         setStatus('success');
         setMessage(response.data.message || 'Your account has been successfully activated.');
-      } catch (error: any) {
+      } catch (error) {
         console.error("Activation Error:", error);
         setStatus('error');
-        const errorData = error.response?.data;
+        const errorData = (error as any).response?.data;
         setMessage(
-          errorData?.error || 
+          errorData?.error ||
           errorData?.detail ||
           'The activation link is invalid or has expired. Please try registering again.'
         );

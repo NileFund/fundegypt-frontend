@@ -51,7 +51,7 @@ const ResetPasswordPage = () => {
 
       setStatus('success');
       setTimeout(() => navigate(ROUTES.LOGIN, { state: { message: "Password reset successful! Please log in." } }), 3000);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Reset Password Error:", error);
       setStatus('error');
       const errorData = error.response?.data;

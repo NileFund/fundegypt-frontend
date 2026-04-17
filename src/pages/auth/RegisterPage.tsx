@@ -114,7 +114,7 @@ const RegisterPage = () => {
       navigate(ROUTES.LOGIN, {
         state: { message: "Account created! Please check your email and click the activation link to complete your registration." }
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error("DEBUG: Registration failed:", error);
       const errorData = error.response?.data;
 

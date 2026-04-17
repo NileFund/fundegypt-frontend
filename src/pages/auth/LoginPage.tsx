@@ -69,7 +69,7 @@ const LoginPage = () => {
             if (refresh) storage.set('refresh_token', refresh);
 
             window.location.href = ROUTES.HOME;
-        } catch (error: any) {
+        } catch (error) {
             console.error("Login Error:", error);
             const errorData = error.response?.data;
 

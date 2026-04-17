@@ -28,12 +28,13 @@ const ForgotPasswordPage = () => {
       await api.post('/password_reset/', { email });
       setStatus('success');
       setMessage("We've sent a password reset link to your email. Please check your inbox and follow the instructions.");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Forgot Password Error:", error);
       setStatus('error');
+      const errorData = (error as any).response?.data;
       setMessage(
-        error.response?.data?.detail ||
-        error.response?.data?.error ||
+        errorData?.detail ||
+        errorData?.error ||
         "An error occurred. Please make sure the email is registered or try again later."
       );
     } finally {
