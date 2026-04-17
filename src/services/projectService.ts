@@ -9,9 +9,12 @@ interface PaginatedResponse<T> {
 }
 
 export interface ProjectFilters {
-  status?: string; // 'running' | 'pending' | 'completed' | 'cancelled'
-  category?: number;
-  page?: number;
+  status?: string   // 'running' | 'pending' | 'completed' | 'cancelled'
+  category?: number
+  page?: number
+  ordering?: string,
+  featured?: boolean,
+  search?: string
 }
 
 export interface DonationSummary {
@@ -25,6 +28,21 @@ export interface DonationSummary {
 export async function getProjects(filters: ProjectFilters = {}): Promise<PaginatedResponse<Project>> {
   const { data } = await api.get<PaginatedResponse<Project>>("/projects/", { params: filters });
   return data;
+}
+
+export async function getFeaturedProjects(): Promise<Project[]> {
+  const { data } = await api.get<Project[]>('/projects/featured/')
+  return data
+}
+
+export async function getTopRatedProjects(): Promise<Project[]> {
+  const { data } = await api.get<Project[]>('/projects/top_rated/')
+  return data
+}
+
+export async function getLatestProjects(): Promise<Project[]> {
+  const { data } = await api.get<Project[]>('/projects/latest/')
+  return data
 }
 
 // GET /projects/:id/

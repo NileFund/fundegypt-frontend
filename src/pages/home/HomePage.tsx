@@ -1,59 +1,67 @@
-import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate, Link } from 'react-router-dom'
-import { getProjects } from '../../services/projectService'
+import { Link } from 'react-router-dom'
 import { getCategories } from '../../services/categoryService'
 import ProjectCard from '../../components/ui/ProjectCard'
 import ProgressBar from '../../components/ui/ProgressBar'
 import Spinner from '../../components/ui/Spinner'
+import ProjectsSlider from '../../components/ui/ProjectsSlider'
+import SearchBar from '../../components/ui/SearchBar'
 import { formatEGP } from '../../utils/formatters'
 import { type Project } from '../../types'
+import { Star, ChevronRight } from 'lucide-react'
+import { getFeaturedProjects, getLatestProjects, getTopRatedProjects } from '../../services/projectService'
 
 function daysLeft(endTime: string): number {
   return Math.max(0, Math.ceil((new Date(endTime).getTime() - Date.now()) / 86_400_000))
 }
 
-function TrendingCard({ project }: { project: Project }) {
+function TopRatedCard({ project }: { project: Project }) {
   const cover = project.pictures?.[0]?.image
   const pct = project.donationPercentage ?? 0
   const remaining = daysLeft(project.endTime)
+  const rating = project.averageRating ?? 0
 
   return (
     <Link
       to={`/projects/${project.id}`}
-      className="shrink-0 w-85 bg-surface-card rounded-2xl overflow-hidden shadow-md group hover:shadow-xl transition-all duration-300"
+      className="group relative h-full overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300"
     >
-      <div className="h-52 overflow-hidden">
+      <div className="absolute inset-0">
         {cover ? (
           <img
             src={cover}
             alt={project.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full bg-brand-mint flex items-center justify-center text-brand-primary text-sm">
+          <div className="w-full h-full bg-brand-mint flex items-center justify-center text-brand-primary">
             No image
           </div>
         )}
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
       </div>
 
-      <div className="p-6">
-        <h3 className="text-base font-bold text-text-primary mb-4 line-clamp-2 group-hover:text-brand-primary transition-colors">
-          {project.title}
-        </h3>
+      <div className="absolute inset-0 flex flex-col justify-between p-6">
+        <div className="flex justify-between items-start">
+          <div className="bg-brand-primary/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg">
+            <p className="text-sm font-bold"> <Star className="w-4 h-4 fill-current text-yellow-400" /> {rating.toFixed(1)}</p>
+          </div>
+          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-xs font-semibold">
+            {remaining} days
+          </div>
+        </div>
 
         <div className="space-y-3">
-          <ProgressBar percent={pct} />
+          <h3 className="text-white font-bold text-xl line-clamp-2 group-hover:text-brand-primary transition-colors">
+            {project.title}
+          </h3>
 
-          <div className="flex justify-between items-center pt-1">
-            <div className="flex flex-col">
-              <span className="text-xs text-text-muted">Raised</span>
-              <span className="font-bold text-text-primary text-sm">{formatEGP(project.totalDonated)}</span>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-white text-sm">
+              <span className="opacity-80">Raised</span>
+              <span className="font-bold">{formatEGP(project.totalDonated)}</span>
             </div>
-            <div className="flex flex-col items-end">
-              <span className="text-xs text-text-muted">Days Left</span>
-              <span className="font-bold text-text-primary text-sm">{remaining} days</span>
-            </div>
+            <ProgressBar percent={pct} />
           </div>
         </div>
       </div>
@@ -62,12 +70,19 @@ function TrendingCard({ project }: { project: Project }) {
 }
 
 export default function HomePage() {
-  const navigate = useNavigate()
-  const [search, setSearch] = useState('')
+  const { data: topRatedData, isLoading: topRatedLoading } = useQuery({
+    queryKey: ['projects', 'top_rated'],
+    queryFn: () => getTopRatedProjects(),
+  })
 
-  const { data: runningData, isLoading } = useQuery({
-    queryKey: ['projects', { status: 'running' }],
-    queryFn: () => getProjects({ status: 'running' }),
+  const { data: featuredData, isLoading: featuredLoading } = useQuery({
+    queryKey: ['projects', 'featured'],
+    queryFn: () => getFeaturedProjects(),
+  })
+
+  const { data: latestData, isLoading: latestLoading } = useQuery({
+    queryKey: ['projects', 'latest'],
+    queryFn: () => getLatestProjects(),
   })
 
   const { data: categories } = useQuery({
@@ -75,25 +90,23 @@ export default function HomePage() {
     queryFn: getCategories,
   })
 
-  const allRunning = runningData?.results ?? []
+  const topRatedProjects = (topRatedData ?? []).slice(0, 5)
+  const featuredProjects = (featuredData ?? []).slice(0, 5)
+  const latestProjects = (latestData ?? []).slice(0, 5)
 
-  const trendingProjects = [...allRunning]
-    .sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))
-    .slice(0, 8)
+  const isLoading = topRatedLoading || featuredLoading || latestLoading
 
-  const featuredProjects = allRunning.filter(p => p.isFeatured).slice(0, 6)
-  const latestProjects = [...allRunning].slice(0, 6)
-
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault()
-    if (search.trim()) navigate(`/search?q=${encodeURIComponent(search.trim())}`)
-  }
+  const sliderItems = topRatedProjects.map(p => ({
+    id: p.id,
+    image: p.pictures?.[0]?.image || '',
+    title: p.title,
+    component: <TopRatedCard project={p} />,
+  }))
 
   return (
     <div>
-     
+      {/* Hero Section */}
       <section className="relative bg-brand-secondary overflow-hidden">
-     
         <div className="absolute inset-0 bg-linear-to-br from-brand-secondary via-brand-secondary to-[#0D4438] pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto px-8 py-24 md:py-32">
           <div className="max-w-2xl">
@@ -116,45 +129,22 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Search Bar */}
+      <SearchBar />
 
-      <div className="relative z-20 -mt-8 px-4 sm:px-8">
-        <div className="max-w-3xl mx-auto">
-          <form
-            onSubmit={handleSearch}
-            className="bg-surface-card rounded-xl shadow-2xl flex items-center gap-3 px-4 py-3"
-          >
-            <svg className="w-5 h-5 text-text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
-            </svg>
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search for projects, categories, or causes..."
-              className="flex-1 border-none outline-none text-text-body text-sm bg-transparent py-2"
-            />
-            <button
-              type="submit"
-              className="bg-brand-primary hover:bg-[#278a72] text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors shrink-0"
-            >
-              Search
-            </button>
-          </form>
-        </div>
-      </div>
-
-  
+      {/* Categories Section */}
       {categories && categories.length > 0 && (
         <section className="bg-surface-card py-16 mt-4">
           <div className="max-w-7xl mx-auto px-8">
             <div className="flex items-center justify-between mb-10">
               <h2 className="text-xl font-bold text-text-primary tracking-tight">Browse by Category</h2>
-              <Link to="/categories" className="text-sm font-semibold text-brand-primary hover:underline">
-                View all
+              <Link to="/categories" className="text-sm font-semibold text-brand-primary hover:underline flex items-center gap-1">
+                View all <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
 
             <div className="flex gap-6 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              {categories.map(c => (
+              {Array.isArray(categories) && categories.map(c => (
                 <Link
                   key={c.id}
                   to={`/categories/${c.id}`}
@@ -185,30 +175,43 @@ export default function HomePage() {
         </div>
       ) : (
         <>
-          {trendingProjects.length > 0 && (
+          {/* Top Rated Slider Section */}
+          {topRatedProjects.length > 0 && (
             <section className="py-16 bg-surface-page overflow-hidden">
               <div className="max-w-7xl mx-auto px-8">
                 <div className="flex items-end justify-between mb-10">
                   <div>
                     <span className="text-xs font-bold tracking-[0.2em] text-brand-primary uppercase">
-                      Trending Projects
+                      Highest Rated
                     </span>
-                    <h2 className="text-3xl font-bold text-text-primary mt-1">Top Performing Today</h2>
+                    <h2 className="text-3xl font-bold text-text-primary mt-1">Top Projects to Support</h2>
+                    <p className="text-text-muted mt-2 text-sm">Support these highly-rated projects and make an impact.</p>
                   </div>
-                  <Link to="/projects" className="text-sm font-semibold text-brand-primary hover:underline flex items-center gap-1">
-                    View all →
+                  <Link to="/projects?ordering=rating" className="text-sm font-semibold text-brand-primary hover:underline flex items-center gap-1">
+                    View all <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
 
-                <div className="flex gap-6 overflow-x-auto pb-4 -mx-8 px-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                  {trendingProjects.map(p => (
-                    <TrendingCard key={p.id} project={p} />
-                  ))}
-                </div>
+                {sliderItems.length > 0 ? (
+                  <ProjectsSlider
+                    projects={topRatedProjects}
+                    autoPlay
+                    autoPlayInterval={5000}
+                    showIndicators
+                    showArrows
+                    showTitle
+                    height="h-96"
+                  />
+                ) : (
+                  <div className="h-96 bg-surface-card rounded-2xl flex items-center justify-center text-text-muted">
+                    <p>No rated projects available</p>
+                  </div>
+                )}
               </div>
             </section>
           )}
 
+          {/* Featured Projects Section */}
           {featuredProjects.length > 0 && (
             <section className="py-16 bg-surface-card">
               <div className="max-w-7xl mx-auto px-8">
@@ -220,9 +223,10 @@ export default function HomePage() {
                     <h2 className="text-3xl font-bold text-text-primary leading-tight">
                       Featured Projects
                     </h2>
+                    <p className="text-text-muted mt-2 text-sm">Projects selected by our team for exceptional impact.</p>
                   </div>
                   <Link to="/projects?featured=true" className="text-sm font-semibold text-brand-primary hover:underline flex items-center gap-1">
-                    View all featured →
+                    View all featured <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
 
@@ -235,6 +239,7 @@ export default function HomePage() {
             </section>
           )}
 
+          {/* Latest Projects Section */}
           {latestProjects.length > 0 && (
             <section className="py-16 bg-surface-page">
               <div className="max-w-7xl mx-auto px-8">
@@ -243,8 +248,8 @@ export default function HomePage() {
                     <h2 className="text-3xl font-bold text-text-primary">Latest Projects</h2>
                     <p className="text-text-muted mt-2 text-sm">Be the first to back these fresh ideas from Egypt.</p>
                   </div>
-                  <Link to="/projects" className="text-sm font-semibold text-brand-primary hover:underline flex items-center gap-1">
-                    View all →
+                  <Link to="/projects?ordering=newest" className="text-sm font-semibold text-brand-primary hover:underline flex items-center gap-1">
+                    View all <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
 
@@ -257,7 +262,7 @@ export default function HomePage() {
             </section>
           )}
 
-          {allRunning.length === 0 && (
+          {topRatedProjects.length === 0 && featuredProjects.length === 0 && latestProjects.length === 0 && (
             <div className="py-24 text-center text-text-muted">
               <p className="text-lg font-medium">No active projects yet.</p>
               <p className="text-sm mt-2">Be the first to start a campaign!</p>

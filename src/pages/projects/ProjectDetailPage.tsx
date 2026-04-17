@@ -13,6 +13,14 @@ import TagBadge from '../../components/ui/TagBadge'
 import Spinner from '../../components/ui/Spinner'
 import Alert from '../../components/ui/Alert'
 import Button from '../../components/ui/Button'
+import {
+  getProjectComments,
+  createProjectComment,
+  updateProjectComment,
+  deleteProjectComment,
+  createCommentReply,
+} from '../../services/commentService'
+import CommentSection from '../../components/comments/CommentSection'
 
 function daysLeft(endTime: string): number {
   return Math.max(0, Math.ceil((new Date(endTime).getTime() - Date.now()) / 86_400_000))
@@ -22,15 +30,14 @@ export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const qc = useQueryClient()
-
+  const queryClient = useQueryClient()
   const [imgIndex, setImgIndex] = useState(0)
   const [amount, setAmount] = useState('')
   const [donationError, setDonationError] = useState('')
   const [donationSuccess, setDonationSuccess] = useState(false)
   const [cancelError, setCancelError] = useState('')
 
-  const { data: project, isLoading } = useQuery({
+  const { data: project, isLoading: projectLoading } = useQuery({
     queryKey: ['project', id],
     queryFn: () => getProject(Number(id)),
     enabled: !!id,
@@ -47,11 +54,17 @@ export default function ProjectDetailPage() {
     queryFn: () => getProjects({ category: project!.category.id, status: 'running' }),
     enabled: !!project?.category?.id,
   })
+
+  const { data: commentsData, isLoading: commentsLoading } = useQuery({
+    queryKey: ['project', id, 'comments'],
+    queryFn: () => getProjectComments(Number(id)),
+    enabled: !!id,
+  })
+
   const projectTagIds = new Set(project?.tags?.map(t => t.id) ?? [])
   const similar = (similarData?.results ?? [])
     .filter(p => p.id !== project?.id)
     .sort((a, b) => {
-      // rank by number of shared tags
       const aMatches = a.tags?.filter(t => projectTagIds.has(t.id)).length ?? 0
       const bMatches = b.tags?.filter(t => projectTagIds.has(t.id)).length ?? 0
       return bMatches - aMatches
@@ -63,33 +76,66 @@ export default function ProjectDetailPage() {
     onSuccess: () => {
       setDonationSuccess(true)
       setAmount('')
-      qc.invalidateQueries({ queryKey: ['donation-summary', id] })
+      queryClient.invalidateQueries({ queryKey: ['donation-summary', id] })
     },
     onError: () => setDonationError('Donation failed. Please try again.'),
   })
 
   const cancelMutation = useMutation({
     mutationFn: () => cancelProject(Number(id)),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['project', id] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['project', id] }),
     onError: () => setCancelError('Cannot cancel: project has reached 25%+ of its target.'),
+  })
+
+  const addCommentMutation = useMutation({
+    mutationFn: (content: string) => createProjectComment(Number(id), { content }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['project', id, 'comments'] })
+    },
+  })
+
+  const editCommentMutation = useMutation({
+    mutationFn: ({ commentId, content }: { commentId: number; content: string }) =>
+      updateProjectComment(Number(id), commentId, { content }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['project', id, 'comments'] })
+    },
+  })
+
+  const deleteCommentMutation = useMutation({
+    mutationFn: (commentId: number) => deleteProjectComment(Number(id), commentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['project', id, 'comments'] })
+    },
+  })
+
+  const replyMutation = useMutation({
+    mutationFn: ({ parentCommentId, content }: { parentCommentId: number; content: string }) =>
+      createCommentReply(Number(id), parentCommentId, { content }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['project', id, 'comments'] })
+    },
   })
 
   function handleDonate(e: React.FormEvent) {
     e.preventDefault()
     setDonationError('')
     setDonationSuccess(false)
-    if (!amount || Number(amount) < 10) { setDonationError('Minimum donation is 10 EGP.'); return }
+    if (!amount || Number(amount) < 10) {
+      setDonationError('Minimum donation is 10 EGP.')
+      return
+    }
     donateMutation.mutate()
   }
 
-  if (isLoading) return <Spinner centered />
+  if (projectLoading) return <Spinner centered />
   if (!project) return <p className="text-center py-16 text-text-muted">Project not found.</p>
 
-  const raised    = summary?.totalDonated ?? project.totalDonated
-  const target    = summary?.totalTarget  ?? project.totalTarget
-  const remaining = summary?.remaining    ?? (target - raised)
-  const percent   = getPercent(raised, target)
-  const isOwner   = !!user && user.id === project.ownerId
+  const raised = summary?.totalDonated ?? project.totalDonated
+  const target = summary?.totalTarget ?? project.totalTarget
+  const remaining = summary?.remaining ?? (target - raised)
+  const percent = getPercent(raised, target)
+  const isOwner = !!user && user.id === project.ownerId
   const canCancel = isOwner && percent < 25 && project.status === 'running'
 
   const images = project.pictures?.map(i => i.image) ?? []
@@ -97,7 +143,6 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="pb-20">
-
       <section className="relative h-125 w-full overflow-hidden">
         {heroImg ? (
           <img src={heroImg} alt={project.title} className="w-full h-full object-cover" />
@@ -139,9 +184,7 @@ export default function ProjectDetailPage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-6 mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10">
-
         <div className="lg:col-span-8 space-y-8">
-
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8">
             <h2 className="text-2xl font-semibold text-text-primary mb-5">About the Project</h2>
             <p className="text-text-body leading-relaxed whitespace-pre-line text-sm">{project.details}</p>
@@ -173,11 +216,27 @@ export default function ProjectDetailPage() {
             </div>
           )}
 
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-8">
+            <CommentSection
+              comments={commentsData || []}
+              isLoading={commentsLoading || addCommentMutation.isPending}
+              onAddComment={async (content) => {
+                await addCommentMutation.mutateAsync(content)
+              }}
+              onEditComment={async (commentId, content) => {
+                await editCommentMutation.mutateAsync({ commentId, content })
+              }}
+              onDeleteComment={(commentId) => deleteCommentMutation.mutateAsync(commentId)}
+              onReply={async (parentCommentId, content) => {
+                await replyMutation.mutateAsync({ parentCommentId, content })
+              }}
+              title="Project Discussion"
+            />
+          </div>
         </div>
 
         <div className="lg:col-span-4">
           <div className="sticky top-24 bg-white rounded-xl border-2 border-brand-primary/20 shadow-lg p-7 space-y-6">
-
             <div className="space-y-2">
               <div className="flex justify-between items-end">
                 <span className="text-3xl font-bold text-text-primary">{formatEGP(raised)}</span>
@@ -258,7 +317,6 @@ export default function ProjectDetailPage() {
                 {cancelError && <Alert type="error" message={cancelError} />}
               </div>
             )}
-
           </div>
         </div>
       </div>
@@ -274,7 +332,6 @@ export default function ProjectDetailPage() {
           </div>
         </section>
       )}
-
     </div>
   )
 }

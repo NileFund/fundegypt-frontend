@@ -15,6 +15,7 @@ export interface Category {
   id: number
   name: string
   icon: string
+  description: string
 }
 
 export interface Tag {
@@ -43,7 +44,8 @@ export interface Project {
   status: string
   owner: string        // full name from backend
   ownerId: number
-  donationPercentage: number
+  donationPercentage: number,
+  createdAt: string
 }
 
 export interface Donation {
