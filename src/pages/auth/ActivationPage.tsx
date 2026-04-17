@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   ArrowRight
 } from 'lucide-react';
+import axios from 'axios';
 import api from '../../services/api';
 import { ROUTES, APP_NAME } from '../../utils/constants';
 
@@ -30,12 +31,14 @@ const ActivationPage = () => {
       } catch (error) {
         console.error("Activation Error:", error);
         setStatus('error');
-        const errorData = (error as any).response?.data;
-        setMessage(
-          errorData?.error ||
-          errorData?.detail ||
-          'The activation link is invalid or has expired. Please try registering again.'
-        );
+
+        let errorMsg = 'The activation link is invalid or has expired. Please try registering again.';
+        if (axios.isAxiosError(error)) {
+          const errorData = error.response?.data;
+          errorMsg = errorData?.error || errorData?.detail || errorMsg;
+        }
+
+        setMessage(errorMsg);
       }
     };
 

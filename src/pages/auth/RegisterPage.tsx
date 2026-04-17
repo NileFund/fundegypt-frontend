@@ -8,6 +8,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { ROUTES, APP_NAME } from '../../utils/constants';
+import axios from 'axios';
 import api from '../../services/api';
 import { validateEmail, validatePassword, validateEgyptPhone } from '../../utils/validators';
 
@@ -116,19 +117,23 @@ const RegisterPage = () => {
       });
     } catch (error) {
       console.error("DEBUG: Registration failed:", error);
-      const errorData = error.response?.data;
 
-      if (errorData && typeof errorData === 'object') {
-        const mappedErrors: Record<string, string> = {};
-        Object.keys(errorData).forEach(key => {
-          let fieldName = key;
-          if (key === 'first_name') fieldName = 'firstName';
-          else if (key === 'last_name') fieldName = 'lastName';
-          else if (key === 'username') fieldName = 'email';
+      if (axios.isAxiosError(error)) {
+        const errorData = error.response?.data;
+        if (errorData && typeof errorData === 'object') {
+          const mappedErrors: Record<string, string> = {};
+          Object.keys(errorData).forEach(key => {
+            let fieldName = key;
+            if (key === 'first_name') fieldName = 'firstName';
+            else if (key === 'last_name') fieldName = 'lastName';
+            else if (key === 'username') fieldName = 'email';
 
-          mappedErrors[fieldName] = Array.isArray(errorData[key]) ? errorData[key][0] : errorData[key];
-        });
-        setFieldErrors(mappedErrors);
+            mappedErrors[fieldName] = Array.isArray(errorData[key]) ? errorData[key][0] : errorData[key];
+          });
+          setFieldErrors(mappedErrors);
+        } else {
+          setGeneralError("Registration failed. Please try again.");
+        }
       } else {
         setGeneralError("Registration failed. Please try again.");
       }

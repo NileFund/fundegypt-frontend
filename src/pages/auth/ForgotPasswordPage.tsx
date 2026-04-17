@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import axios from 'axios';
 import api from '../../services/api';
 import { ROUTES, APP_NAME } from '../../utils/constants';
 import { validateEmail } from '../../utils/validators';
@@ -28,15 +29,17 @@ const ForgotPasswordPage = () => {
       await api.post('/password_reset/', { email });
       setStatus('success');
       setMessage("We've sent a password reset link to your email. Please check your inbox and follow the instructions.");
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Forgot Password Error:", error);
       setStatus('error');
-      const errorData = (error as any).response?.data;
-      setMessage(
-        errorData?.detail ||
-        errorData?.error ||
-        "An error occurred. Please make sure the email is registered or try again later."
-      );
+
+      let errorMsg = "An error occurred. Please make sure the email is registered or try again later.";
+      if (axios.isAxiosError(error)) {
+        const errorData = error.response?.data;
+        errorMsg = errorData?.detail || errorData?.error || errorMsg;
+      }
+
+      setMessage(errorMsg);
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import axios from 'axios';
 import api from '../../services/api';
 import { ROUTES, APP_NAME } from '../../utils/constants';
 import { validateEmail } from '../../utils/validators';
@@ -71,17 +72,21 @@ const LoginPage = () => {
             window.location.href = ROUTES.HOME;
         } catch (error) {
             console.error("Login Error:", error);
-            const errorData = error.response?.data;
 
-            if (error.response?.status === 401 || error.response?.status === 400) {
-                if (typeof errorData === 'object' && !errorData.detail && !errorData.non_field_errors) {
-                    setFieldErrors(errorData);
+            if (axios.isAxiosError(error)) {
+                const errorData = error.response?.data;
+                if (error.response?.status === 401 || error.response?.status === 400) {
+                    if (typeof errorData === 'object' && !errorData.detail && !errorData.non_field_errors) {
+                        setFieldErrors(errorData);
+                    } else {
+                        setGeneralError(
+                            errorData?.detail ||
+                            errorData?.non_field_errors?.[0] ||
+                            "Invalid email or password. Please try again."
+                        );
+                    }
                 } else {
-                    setGeneralError(
-                        errorData?.detail ||
-                        errorData?.non_field_errors?.[0] ||
-                        "Invalid email or password. Please try again."
-                    );
+                    setGeneralError("An unexpected error occurred. Please try again later.");
                 }
             } else {
                 setGeneralError("An unexpected error occurred. Please try again later.");

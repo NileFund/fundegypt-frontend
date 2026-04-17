@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Lock, ArrowRight, Loader2, AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react';
+import axios from 'axios';
 import api from '../../services/api';
 import { ROUTES, APP_NAME } from '../../utils/constants';
 import { validatePassword } from '../../utils/validators';
@@ -54,15 +55,16 @@ const ResetPasswordPage = () => {
     } catch (error) {
       console.error("Reset Password Error:", error);
       setStatus('error');
-      const errorData = error.response?.data;
-      setMessage(
-        errorData?.detail ||
-        errorData?.error ||
-        "The reset link is invalid or has expired."
-      );
-      if (errorData && typeof errorData === 'object' && !errorData.detail) {
-        setFieldErrors(errorData);
+
+      let errorMsg = "The reset link is invalid or has expired.";
+      if (axios.isAxiosError(error)) {
+        const errorData = error.response?.data;
+        errorMsg = errorData?.detail || errorData?.error || errorMsg;
+        if (errorData && typeof errorData === 'object' && !errorData.detail) {
+          setFieldErrors(errorData);
+        }
       }
+      setMessage(errorMsg);
     } finally {
       setIsLoading(false);
     }
