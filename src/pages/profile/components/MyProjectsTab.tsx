@@ -1,70 +1,50 @@
 import React, { useState, useEffect } from "react";
-import { PlusCircle, Star } from "lucide-react";
-
-// TypeScript interface for a Created Project
-interface MyProject {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  category: string;
-  raised: number;
-  target: number;
-  rating: number;
-  daysLeft: number;
-  status: "Active" | "Completed" | "Cancelled";
-}
+import { PlusCircle, Star, Image as ImageIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // Added for routing
+import { getMyProjects } from "../../../services/projectService"; // Adjust path
+import { type Project } from "../../../types";
+import { ROUTES } from "../../../utils/constants"; // Adjust path
 
 export default function MyProjectsTab() {
-  const [projects, setProjects] = useState<MyProject[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO: Replace with actual Axios call (e.g., GET /api/projects/me/)
     const fetchMyProjects = async () => {
-      setTimeout(() => {
-        setProjects([
-          {
-            id: 1,
-            title: "Clean Water Initiative for Fayoum",
-            description:
-              "Installing modern water filtration systems in rural Fayoum villages to provide safe drinking water for over 500 families.",
-            image:
-              "https://lh3.googleusercontent.com/aida-public/AB6AXuBdojdw927_3ArMYgx5612cv0S-5MEDdN8sTGt3c7vXK9Fe43HGL3f1Vlkq-U9woUSxno0r27BOrYCHKBXB5O_wDm5aKDktcexRoT-fcVEDqIoC1Bi_rvF1LJemXnSCzui3m5RchOnIM3N7hh41zvh3rPXWnltbop-zWig1_dhV2WrVo_zDZkXvVCAnbZ-HBqD0KOkOH3atNWRzCouyL-w_hOmywJkxlLoUSdyffPFENVew0hI4so-ufa85xRbqNXz9cTljMotCXbA", // Placeholder
-            category: "Environment",
-            raised: 45000,
-            target: 62500,
-            rating: 4.8,
-            daysLeft: 12,
-            status: "Active",
-          },
-          {
-            id: 2,
-            title: "Tech Bootcamp for Cairo Orphans",
-            description:
-              "Providing laptops and a 6-month coding bootcamp to 20 orphaned teenagers to help them transition into software development careers.",
-            image:
-              "https://lh3.googleusercontent.com/aida-public/AB6AXuBdojdw927_3ArMYgx5612cv0S-5MEDdN8sTGt3c7vXK9Fe43HGL3f1Vlkq-U9woUSxno0r27BOrYCHKBXB5O_wDm5aKDktcexRoT-fcVEDqIoC1Bi_rvF1LJemXnSCzui3m5RchOnIM3N7hh41zvh3rPXWnltbop-zWig1_dhV2WrVo_zDZkXvVCAnbZ-HBqD0KOkOH3atNWRzCouyL-w_hOmywJkxlLoUSdyffPFENVew0hI4so-ufa85xRbqNXz9cTljMotCXbA", // Placeholder
-            category: "Education",
-            raised: 5000,
-            target: 50000,
-            rating: 0,
-            daysLeft: 45,
-            status: "Active",
-          },
-        ]);
+      try {
+        setIsLoading(true);
+        // Calls the real Django endpoint
+        const response = await getMyProjects();
+        // Assuming your getMyProjects returns a paginated response based on projectService.ts
+        setProjects(response.results || response);
+      } catch (err) {
+        console.error("Failed to load campaigns:", err);
+        setError("Failed to load your campaigns. Please try again later.");
+      } finally {
         setIsLoading(false);
-      }, 1000);
+      }
     };
 
     fetchMyProjects();
   }, []);
 
-  // --- Helper to calculate progress bar color based on Design Docs ---
+  // --- Helper to calculate progress bar color ---
   const getProgressColor = (percent: number) => {
     if (percent < 25) return "#E53E3E"; // Red
     if (percent <= 75) return "#F57F17"; // Amber
     return "#6FCF97"; // Green
+  };
+
+  // --- Helper to calculate Days Left from Django's endTime ---
+  const calculateDaysLeft = (endTime: string) => {
+    if (!endTime) return 0;
+    const end = new Date(endTime).getTime();
+    const now = new Date().getTime();
+    const diff = end - now;
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    return days > 0 ? days : 0;
   };
 
   // --- STATE 1: LOADING SKELETON ---
@@ -86,7 +66,16 @@ export default function MyProjectsTab() {
     );
   }
 
-  // --- STATE 2: EMPTY STATE (Exactly matching Docs Section 9.2) ---
+  // --- STATE 2: ERROR ---
+  if (error) {
+    return (
+      <div className="bg-[#FFF5F5] border-l-4 border-[#E53E3E] p-4 rounded-md">
+        <p className="text-[#E53E3E]">{error}</p>
+      </div>
+    );
+  }
+
+  // --- STATE 3: EMPTY STATE ---
   if (projects.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 bg-white border border-[#D1F2EB] rounded-xl animate-in fade-in">
@@ -95,19 +84,23 @@ export default function MyProjectsTab() {
         </div>
         <h3 className="text-xl font-semibold text-[#1F6F5F] mb-2">No Projects Yet</h3>
         <p className="text-[#4A5568] mb-6">You haven't created any projects yet. Start your first campaign!</p>
-        <button className="bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200">
+        <button
+          onClick={() => navigate(ROUTES.CREATE_PROJECT)}
+          className="bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200">
           Create Project
         </button>
       </div>
     );
   }
 
-  // --- STATE 3: DATA LOADED (Project Cards) ---
+  // --- STATE 4: DATA LOADED ---
   return (
     <div className="animate-in fade-in duration-300">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-on-surface">My Campaigns</h2>
-        <button className="bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200 flex items-center">
+        <button
+          onClick={() => navigate(ROUTES.CREATE_PROJECT)}
+          className="bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200 flex items-center">
           <PlusCircle size={16} className="mr-2" />
           New Campaign
         </button>
@@ -115,25 +108,39 @@ export default function MyProjectsTab() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((project) => {
-          const percent = Math.min(Math.round((project.raised / project.target) * 100), 100);
+          // Guard against division by zero if target is 0
+          const percent =
+            project.totalTarget > 0 ? Math.min(Math.round((project.totalDonated / project.totalTarget) * 100), 100) : 0;
+
           const barColor = getProgressColor(percent);
+          const daysLeft = calculateDaysLeft(project.endTime);
+
+          // Grab the first image from the pictures array, or null if empty
+          const displayImage = project.pictures?.length > 0 ? project.pictures[0].image : null;
 
           return (
             <div
               key={project.id}
-              className="bg-white rounded-xl border border-[#D1F2EB] shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-200 overflow-hidden flex flex-col group cursor-pointer">
+              className="bg-white rounded-xl border border-[#D1F2EB] shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-200 overflow-hidden flex flex-col group cursor-pointer"
+              onClick={() => navigate(`${ROUTES.PROJECT_DETAIL.replace(":id", project.id.toString())}`)} // Assuming you want clicking to go to detail page
+            >
               {/* Image & Badge */}
-              <div className="relative h-48 w-full bg-[#EEEEEE] overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+              <div className="relative h-48 w-full bg-[#EEEEEE] overflow-hidden flex items-center justify-center">
+                {displayImage ? (
+                  <img
+                    src={displayImage}
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <ImageIcon size={48} className="text-[#CBD5E0]" />
+                )}
+
                 <span className="absolute top-3 left-3 bg-[#D1F2EB] text-[#1F6F5F] text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                  {project.category}
+                  {project.category?.name || "General"}
                 </span>
                 <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[#1F6F5F] text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
-                  {project.status}
+                  {project.status || "Active"}
                 </span>
               </div>
 
@@ -142,7 +149,8 @@ export default function MyProjectsTab() {
                 <h3 className="text-lg font-semibold text-[#1F6F5F] line-clamp-2 leading-tight mb-2">
                   {project.title}
                 </h3>
-                <p className="text-sm text-[#4A5568] line-clamp-2 mb-4 flex-grow">{project.description}</p>
+                {/* Mapped 'description' to 'details' per types.ts */}
+                <p className="text-sm text-[#4A5568] line-clamp-2 mb-4 flex-grow">{project.details}</p>
 
                 {/* Progress Bar */}
                 <div className="mt-auto">
@@ -156,10 +164,10 @@ export default function MyProjectsTab() {
                   <div className="flex justify-between items-end mb-4">
                     <div>
                       <span className="text-sm font-bold text-[#1F6F5F]">
-                        {project.raised.toLocaleString("ar-EG")} EGP
+                        {Number(project.totalDonated).toLocaleString("ar-EG")} EGP
                       </span>
                       <span className="text-xs text-[#4A5568] block mt-0.5">
-                        raised of {project.target.toLocaleString("ar-EG")}
+                        raised of {Number(project.totalTarget).toLocaleString("ar-EG")}
                       </span>
                     </div>
                     <span className="text-sm font-bold" style={{ color: barColor }}>
@@ -172,12 +180,16 @@ export default function MyProjectsTab() {
                     <div className="flex items-center text-sm text-[#4A5568]">
                       <Star
                         size={16}
-                        className={project.rating > 0 ? "text-[#F6AD55] mr-1 fill-[#F6AD55]" : "text-[#D1F2EB] mr-1"}
+                        className={
+                          project.averageRating > 0 ? "text-[#F6AD55] mr-1 fill-[#F6AD55]" : "text-[#D1F2EB] mr-1"
+                        }
                       />
-                      <span className="font-medium mt-0.5">{project.rating > 0 ? project.rating : "New"}</span>
+                      <span className="font-medium mt-0.5">
+                        {project.averageRating > 0 ? project.averageRating.toFixed(1) : "New"}
+                      </span>
                     </div>
                     <span className="bg-[#FFF8E1] text-[#F57F17] text-xs font-semibold px-2.5 py-1 rounded-full">
-                      {project.daysLeft} days left
+                      {daysLeft} days left
                     </span>
                   </div>
                 </div>

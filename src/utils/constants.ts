@@ -3,13 +3,13 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 export const APP_NAME = import.meta.env.VITE_APP_NAME as string;
 
 export const COLORS = {
-  primary: "#2FA084",
-  secondary: "#1F6F5F",
-  success: "#6FCF97",
-  mint: "#D1F2EB",
-  page: "#EEEEEE",
-  danger: "#E53E3E",
-  warning: "#F57F17",
+  primary: '#2FA084',
+  secondary: '#1F6F5F',
+  success: '#6FCF97',
+  mint: '#D1F2EB',
+  page: '#EEEEEE',
+  danger: '#E53E3E',
+  warning: '#F57F17',
 } as const;
 
 export const LIMITS = {
@@ -28,7 +28,7 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   REGISTER: "/register",
-  ACTIVATE: "/activate/:token",
+  ACTIVATE: "/activate/:uid/:token",
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/reset-password/:token",
   PROFILE: "/profile",

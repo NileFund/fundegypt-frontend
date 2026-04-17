@@ -31,7 +31,7 @@ export const formatDate = (date: string | Date, locale: 'en-EG' | 'ar-EG' = 'en-
  * A type-safe wrapper for localStorage
  */
 export const storage = {
-    set: (key: string, value: any): void => {
+    set: (key: string, value: unknown): void => {
         try {
             const serializedValue = JSON.stringify(value);
             localStorage.setItem(key, serializedValue);
