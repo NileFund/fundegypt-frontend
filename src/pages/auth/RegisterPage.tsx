@@ -1,3 +1,5 @@
-export default function RegisterPage() {
-  return <div>RegisterPage Page Content</div>;
+import RegisterPage from '../../components/auth/RegisterPage';
+
+export default function RegisterPageEntry() {
+  return <RegisterPage />;
 }
