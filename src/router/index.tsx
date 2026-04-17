@@ -9,7 +9,7 @@ import ActivationPage from "../pages/auth/ActivationPage";
 import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
 
-// Profile Components
+// Profile Components (Your new Single-Page Architecture)
 import ProfilePage from "../pages/profile/ProfilePage";
 import AboutTab from "../pages/profile/components/AboutTab";
 import MyDonationsTab from "../pages/profile/components/MyDonationsTab";
@@ -44,6 +44,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.SEARCH, element: <SearchResultsPage /> },
       { path: ROUTES.CATEGORY, element: <CategoryBrowsePage /> },
 
+      // Profile Feature
       {
         path: ROUTES.PROFILE,
         element: <ProfilePage />,
@@ -61,7 +62,6 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Auth pages
   { path: ROUTES.LOGIN, element: <LoginPage /> },
   { path: ROUTES.REGISTER, element: <RegisterPage /> },
   { path: ROUTES.ACTIVATE, element: <ActivationPage /> },
