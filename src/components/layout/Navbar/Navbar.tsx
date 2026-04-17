@@ -10,10 +10,9 @@ const Navbar = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <nav className="sticky top-0 z-50 glass-shine text-white shadow-xl transition-all duration-300">
+    <nav className="sticky top-0 z-50 glass-shine text-white transition-all duration-300">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-          {/* Logo with Gradient */}
           <Link
             to={ROUTES.HOME}
             className="text-2xl font-bold tracking-tight bg-gradient-to-r from-brand-mint to-brand-success bg-clip-text text-transparent hover:scale-105 transition-transform duration-300"
@@ -21,7 +20,6 @@ const Navbar = () => {
             {APP_NAME}
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             <Link
               to={ROUTES.EXPLORE}
@@ -46,7 +44,6 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Desktop Auth Links */}
           <div className="hidden md:flex items-center gap-6">
             <button
               onClick={() => navigate(ROUTES.LOGIN)}
@@ -62,7 +59,6 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleMenu}
@@ -74,7 +70,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
         <div
           className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'
             }`}

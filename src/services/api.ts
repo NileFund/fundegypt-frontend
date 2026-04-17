@@ -1,11 +1,26 @@
 import axios from 'axios'
 import { API_BASE_URL } from '../utils/constants'
 
+// recursively converts snake_case keys to camelCase
+function camelize(str: string): string {
+  return str.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
+}
+
+function camelizeKeys(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(camelizeKeys)
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [camelize(k), camelizeKeys(v)])
+    )
+  }
+  return value
+}
+
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
 })
 
+// attach jwt token to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token')
   if (token) config.headers.Authorization = `Bearer ${token}`
@@ -13,7 +28,10 @@ api.interceptors.request.use((config) => {
 })
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    response.data = camelizeKeys(response.data)
+    return response
+  },
   async (error) => {
     const original = error.config
     if (error.response?.status === 401 && !original._retry) {
@@ -21,7 +39,7 @@ api.interceptors.response.use(
       try {
         const refresh = localStorage.getItem('refresh_token')
         const { data } = await axios.post(
-          `${API_BASE_URL}/auth/token/refresh/`,
+          `${API_BASE_URL}/accounts/token/refresh/`,
           { refresh }
         )
         localStorage.setItem('access_token', data.access)

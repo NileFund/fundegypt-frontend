@@ -1,7 +1,6 @@
-import { createBrowserRouter,Outlet } from 'react-router-dom'
+import { createBrowserRouter, Outlet } from 'react-router-dom'
 import { ROUTES } from '../utils/constants'
-import PageWrapper from '../components/layout/PageWrapper';
-
+import PageWrapper from '../components/layout/PageWrapper'
 
 import LoginPage         from '../pages/auth/LoginPage'
 import RegisterPage      from '../pages/auth/RegisterPage'
@@ -44,17 +43,19 @@ export const router = createBrowserRouter([
   { path: ROUTES.ACTIVATE,        element: <ActivationPage /> },
   { path: ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
   { path: ROUTES.RESET_PASSWORD,  element: <ResetPasswordPage /> },
+  { path: ROUTES.EXPLORE,         element: <ExplorePage /> },
+  { path: ROUTES.PROJECT_DETAIL,  element: <ProjectDetailPage /> },
+  { path: ROUTES.SEARCH,          element: <SearchResultsPage /> },
+  { path: ROUTES.CATEGORY,        element: <CategoryBrowsePage /> },
+
+  { path: ROUTES.CREATE_PROJECT,  element: <CreateProjectPage /> },
+  { path: ROUTES.EDIT_PROJECT,    element: <EditProjectPage /> },
   { path: ROUTES.PROFILE,         element: <UserProfilePage /> },
   { path: ROUTES.EDIT_PROFILE,    element: <EditProfilePage /> },
   { path: ROUTES.MY_DONATIONS,    element: <MyDonationsPage /> },
-  { path: ROUTES.EXPLORE,         element: <ExplorePage /> },
-  { path: ROUTES.PROJECT_DETAIL,  element: <ProjectDetailPage /> },
-  { path: ROUTES.CREATE_PROJECT,  element: <CreateProjectPage /> },
-  { path: ROUTES.EDIT_PROJECT,    element: <EditProjectPage /> },
-  { path: ROUTES.SEARCH,          element: <SearchResultsPage /> },
-  { path: ROUTES.CATEGORY,        element: <CategoryBrowsePage /> },
+  { path: ROUTES.DELETE_ACCOUNT,  element: <DeleteAccountPage /> },
+
   { path: ROUTES.NOT_FOUND,       element: <NotFoundPage /> },
-  {path: ROUTES.DELETE_ACCOUNT, element: <DeleteAccountPage /> },
     ],
   },
 ])
