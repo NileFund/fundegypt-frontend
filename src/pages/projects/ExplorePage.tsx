@@ -1,20 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { getProjects } from '../../services/projectService'
 import { getCategories } from '../../services/categoryService'
 import ProjectCard from '../../components/ui/ProjectCard'
 import Spinner from '../../components/ui/Spinner'
+import SearchBar from '../../components/ui/SearchBar'
+import Button from '../../components/ui/Button'
 
 export default function ExplorePage() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const status   = searchParams.get('status') ?? ''
+  const status = searchParams.get('status') ?? ''
   const category = searchParams.get('category') ?? ''
-  const page     = Number(searchParams.get('page') ?? 1)
+  const page = Number(searchParams.get('page') ?? 1)
 
   const { data, isLoading } = useQuery({
     queryKey: ['projects', { status, category, page }],
     queryFn: () => getProjects({
-      status:   status   || undefined,
+      status: status || undefined,
       category: category ? Number(category) : undefined,
       page,
     }),
@@ -35,6 +37,20 @@ export default function ExplorePage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Search Bar */}
+      <div className="pt-8">
+        <SearchBar showInSearchPage />
+      </div>
+
+      {/* <div className="max-w-7xl mx-auto px-8 pb-16"> */}
+      {/* Breadcrumbs */}
+      <div className="flex items-center gap-2 text-sm">
+        <Link to="/" className="text-brand-primary hover:text-brand-secondary transition-colors">
+          Home
+        </Link>
+        <span className="text-text-muted">/</span>
+        <span className="text-text-primary font-medium">Categories</span>
+      </div>
       <h1 className="text-2xl font-bold text-text-primary mb-6">Explore Projects</h1>
 
       <div className="flex flex-wrap gap-3 mb-8">
@@ -55,7 +71,7 @@ export default function ExplorePage() {
           className="px-3 py-2 rounded-lg border border-gray-300 text-sm bg-white outline-none focus:border-brand-primary"
         >
           <option value="">All categories</option>
-          {categories?.map(c => (
+          {Array.isArray(categories) && categories.map(c => (
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
@@ -74,17 +90,17 @@ export default function ExplorePage() {
           </div>
 
           <div className="flex justify-center gap-3 mt-10">
-            <button
+            <Button
               disabled={!data?.previous}
               onClick={() => setFilter('page', String(page - 1))}
               className="px-4 py-2 rounded-lg border text-sm disabled:opacity-40 hover:bg-gray-50"
-            >Previous</button>
+            >Previous</Button>
             <span className="px-4 py-2 text-sm text-text-muted">Page {page}</span>
-            <button
+            <Button
               disabled={!data?.next}
               onClick={() => setFilter('page', String(page + 1))}
               className="px-4 py-2 rounded-lg border text-sm disabled:opacity-40 hover:bg-gray-50"
-            >Next</button>
+            >Next</Button>
           </div>
         </>
       )}

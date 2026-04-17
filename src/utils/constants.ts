@@ -40,7 +40,8 @@ export const ROUTES = {
   CREATE_PROJECT: "/projects/create",
   EDIT_PROJECT: "/projects/:id/edit",
   SEARCH: "/search",
-  CATEGORY: "/categories/:id",
+  CATEGORY: "/categories",
+  CATEGORY_DETAIL: "/categories/:id",
   DELETE_ACCOUNT: "/profile/delete-account",
   NOT_FOUND: "*",
 } as const;
