@@ -17,6 +17,11 @@ export interface Category {
   icon: string
 }
 
+export interface Tag {
+  id: number
+  name: string
+}
+
 export interface ProjectImage {
   id: number
   image: string
@@ -27,19 +32,18 @@ export interface Project {
   title: string
   details: string
   category: Category
-  images: ProjectImage[]
-  tags: string[]
+  pictures: ProjectImage[]
+  tags: Tag[]
   totalTarget: number
   totalDonated: number
-  avgRating: number
-  ratingCount: number
-  startDate: string
-  endDate: string
+  averageRating: number
+  startTime: string
+  endTime: string
   isFeatured: boolean
-  isCancelled: boolean
-  creator: User
-  daysLeft: number
-  percentFunded: number
+  status: string
+  owner: string        // full name from backend
+  ownerId: number
+  donationPercentage: number
 }
 
 export interface Donation {
@@ -57,18 +61,3 @@ export interface Comment {
   replies: Comment[]
   parentId: number | null
 }
-
-export interface ApiResponse<T> {
-  data: T
-  message: string
-}
-
-export interface PaginatedResponse<T> {
-  results: T[]
-  count: number
-  next: string | null
-  previous: string | null
-}
-
-export type ProjectStatus = 'active' | 'completed' | 'cancelled' | 'expired'
-export type SortOption = 'latest' | 'most_funded' | 'highest_rated'
