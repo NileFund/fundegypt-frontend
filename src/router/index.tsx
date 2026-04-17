@@ -1,29 +1,31 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom'
-import { ROUTES } from '../utils/constants'
-import PageWrapper from '../components/layout/PageWrapper'
+import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { ROUTES } from '../utils/constants';
+import PageWrapper from '../components/layout/PageWrapper';
 
-import LoginPage from '../pages/auth/LoginPage'
-import RegisterPage from '../pages/auth/RegisterPage'
-import ActivationPage from '../pages/auth/ActivationPage'
-import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage'
-import ResetPasswordPage from '../pages/auth/ResetPasswordPage'
+// Auth
+import LoginPage from '../pages/auth/LoginPage';
+import RegisterPage from '../pages/auth/RegisterPage';
+import ActivationPage from '../pages/auth/ActivationPage';
+import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
 
-import UserProfilePage from '../pages/profile/UserProfilePage'
-import EditProfilePage from '../pages/profile/EditProfilePage'
-import MyDonationsPage from '../pages/profile/MyDonationsPage'
-import DeleteAccountPage from '../pages/profile/DeleteAccountPage'
+// Profile Components
+import ProfilePage from '../pages/profile/ProfilePage';
+import AboutTab from '../pages/profile/components/AboutTab';
+import MyDonationsTab from '../pages/profile/components/MyDonationsTab';
+import MyProjectsTab from '../pages/profile/components/MyProjectsTab';
 
-import ProjectDetailPage from '../pages/projects/ProjectDetailPage'
-import CreateProjectPage from '../pages/projects/CreateProjectPage'
-import EditProjectPage from '../pages/projects/EditProjectPage'
-import ExplorePage from '../pages/projects/ExplorePage'
+// Projects
+import ProjectDetailPage from '../pages/projects/ProjectDetailPage';
+import CreateProjectPage from '../pages/projects/CreateProjectPage';
+import EditProjectPage from '../pages/projects/EditProjectPage';
+import ExplorePage from '../pages/projects/ExplorePage';
 
-import HomePage from '../pages/home/HomePage'
-import SearchResultsPage from '../pages/home/SearchResultsPage'
-import CategoryBrowsePage from '../pages/home/CategoryBrowsePage'
-
-import NotFoundPage from '../pages/error/NotFoundPage'
-
+// Home & Misc
+import HomePage from '../pages/home/HomePage';
+import SearchResultsPage from '../pages/home/SearchResultsPage';
+import CategoryBrowsePage from '../pages/home/CategoryBrowsePage';
+import NotFoundPage from '../pages/error/NotFoundPage';
 
 export const router = createBrowserRouter([
   {
@@ -41,17 +43,29 @@ export const router = createBrowserRouter([
       { path: ROUTES.EDIT_PROJECT,   element: <EditProjectPage /> },
       { path: ROUTES.SEARCH,         element: <SearchResultsPage /> },
       { path: ROUTES.CATEGORY,       element: <CategoryBrowsePage /> },
-      { path: ROUTES.PROFILE,        element: <UserProfilePage /> },
-      { path: ROUTES.EDIT_PROFILE,   element: <EditProfilePage /> },
-      { path: ROUTES.MY_DONATIONS,   element: <MyDonationsPage /> },
-      { path: ROUTES.DELETE_ACCOUNT, element: <DeleteAccountPage /> },
+
+      // Profile Feature
+      {
+        path: ROUTES.PROFILE,
+        element: <ProfilePage />,
+        children: [
+          { index: true, element: <AboutTab /> },
+          { path: ROUTES.MY_DONATIONS, element: <MyDonationsTab /> },
+          { path: ROUTES.MY_PROJECTS,  element: <MyProjectsTab /> },
+          
+          { path: ROUTES.EDIT_PROFILE,   element: <AboutTab /> },
+          { path: ROUTES.DELETE_ACCOUNT, element: <AboutTab /> },
+        ],
+      },
+
       { path: ROUTES.NOT_FOUND,      element: <NotFoundPage /> },
     ],
   },
-  // auth pages — no navbar/footer
+  
+  // Auth pages — no navbar/footer
   { path: ROUTES.LOGIN,           element: <LoginPage /> },
   { path: ROUTES.REGISTER,        element: <RegisterPage /> },
   { path: ROUTES.ACTIVATE,        element: <ActivationPage /> },
   { path: ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
   { path: ROUTES.RESET_PASSWORD,  element: <ResetPasswordPage /> },
-])
+]);
