@@ -14,7 +14,6 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 glass-shine text-white shadow-xl transition-all duration-300">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-          {/* Logo with Gradient */}
           <Link
             to={ROUTES.HOME}
             className="text-2xl font-bold tracking-tight bg-gradient-to-r from-brand-mint to-brand-success bg-clip-text text-transparent hover:scale-105 transition-transform duration-300"
@@ -24,7 +23,6 @@ const Navbar = () => {
 
           {isLoggedIn ? (
             <>
-              {/* Desktop Navigation - Logged In */}
               <div className="hidden md:flex items-center gap-8">
                 <Link to={ROUTES.EXPLORE} className="relative font-medium group transition-all duration-300 hover:text-brand-mint">
                   Explore
@@ -40,7 +38,6 @@ const Navbar = () => {
                 </Link>
               </div>
 
-              {/* Desktop Auth Links - Logged In */}
               <div className="hidden md:flex items-center gap-6">
                 <Link to={ROUTES.PROFILE} className="font-medium hover:text-brand-mint transition-colors">Profile</Link>
                 <button
@@ -52,7 +49,6 @@ const Navbar = () => {
               </div>
             </>
           ) : (
-            /* Simplified Nav for Guests */
             <div className="flex items-center gap-4">
               <Link
                 to={ROUTES.CREATE_PROJECT}
@@ -69,7 +65,6 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Mobile Menu Button - Show only if logged in or has more links */}
           {isLoggedIn && (
             <div className="md:hidden flex items-center">
               <button onClick={toggleMenu} className="p-2 rounded-md hover:bg-brand-primary/20 transition-colors">
@@ -79,7 +74,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Navigation Drawer */}
         {isLoggedIn && isMenuOpen && (
           <div className="md:hidden mt-4 pb-6 transition-all duration-500">
             <div className="flex flex-col gap-4">
