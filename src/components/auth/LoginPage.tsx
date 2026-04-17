@@ -4,7 +4,7 @@ import { Mail, Lock, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import api from '../../services/api';
 import { ROUTES, APP_NAME } from '../../utils/constants';
 import { validateEmail } from '../../utils/validators';
-import { storage } from '../../utils/helpers';
+import { setTokens } from '../../utils/authHelpers';
 
 const LoginPage = () => {
   const location = useLocation();
@@ -65,8 +65,7 @@ const LoginPage = () => {
       const token = data.access || data.token || data.key;
       const refresh = data.refresh;
 
-      if (token) storage.set('access_token', token);
-      if (refresh) storage.set('refresh_token', refresh);
+      if (token && refresh) setTokens(token, refresh);
 
       window.location.href = ROUTES.HOME;
     } catch (error: any) {
