@@ -1,9 +1,24 @@
 import React, { useState } from "react";
 import DeleteAccountModal from "./DeleteAccountModal";
+import { useAuth } from "../../../context/useAuth";
 
 export default function AboutTab() {
-  // State to control the visibility of the Delete Account Modal
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // Bring in the globally authenticated user and loading state
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="animate-pulse p-8 flex justify-center text-on-surface-variant">
+        Loading profile information...
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <div className="p-8 flex justify-center text-error">Error loading profile data.</div>;
+  }
 
   return (
     <div className="animate-in fade-in duration-300">
@@ -18,24 +33,32 @@ export default function AboutTab() {
                 <p className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">
                   Phone Number
                 </p>
-                <p className="text-lg font-medium text-on-surface">+20 123 456 7890</p>
+                <p className="text-lg font-medium text-on-surface">{user.phone || "Not provided"}</p>
               </div>
               <div>
                 <p className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">Birthdate</p>
-                <p className="text-lg font-medium text-on-surface">May 14, 1992</p>
+                <p className="text-lg font-medium text-on-surface">{user.birthdate || "Not provided"}</p>
               </div>
               <div>
                 <p className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">Country</p>
-                <p className="text-lg font-medium text-on-surface">Egypt</p>
+                <p className="text-lg font-medium text-on-surface">{user.country || "Not provided"}</p>
               </div>
               <div>
                 <p className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">
                   Social Profile
                 </p>
-                <a className="text-lg font-medium text-primary hover:underline flex items-center" href="#">
-                  facebook.com/ahmed.elsayed
-                  <span className="material-symbols-outlined text-sm ml-1">open_in_new</span>
-                </a>
+                {user.facebookProfile ? (
+                  <a
+                    className="text-lg font-medium text-primary hover:underline flex items-center"
+                    href={user.facebookProfile}
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    View Profile
+                    <span className="material-symbols-outlined text-sm ml-1">open_in_new</span>
+                  </a>
+                ) : (
+                  <p className="text-lg font-medium text-on-surface-variant/60">Not connected</p>
+                )}
               </div>
             </div>
           </div>
@@ -44,6 +67,7 @@ export default function AboutTab() {
           <div className="bg-surface-container-low p-8 rounded-xl">
             <h3 className="text-lg font-semibold mb-4 text-on-surface">Biography</h3>
             <p className="text-on-surface-variant leading-relaxed">
+              {/* Note: Bio isn't in your current Django User JSON, so keeping the placeholder for now. */}
               Architecture enthusiast and community development advocate based in Cairo. Focused on sustainable urban
               planning and supporting local initiatives that preserve historical landmarks while modernizing
               infrastructure. Join me in building a better future for our communities.
@@ -58,6 +82,7 @@ export default function AboutTab() {
               Impact Statistics
             </h3>
             <div className="space-y-6">
+              {/* Note: These stats are still placeholders until you have a specific backend endpoint for them */}
               <div className="flex justify-between items-center">
                 <span className="text-on-surface-variant font-medium">Projects Supported</span>
                 <span className="text-2xl font-bold text-primary">12</span>

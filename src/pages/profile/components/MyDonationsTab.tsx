@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Heart } from "lucide-react";
-
-// TypeScript interface matching your Django backend response
-interface Donation {
-  id: number;
-  amount: string; // Django Decimal fields often serialize as strings
-  date: string;
-  project: {
-    id: number;
-    title: string;
-    category: string;
-    image: string;
-  };
-}
+import { Heart, Image as ImageIcon } from "lucide-react";
+import { getMyDonations } from "../../../services/donationService";
+import { type Donation } from "../../../types";
 
 export default function MyDonationsTab() {
   const [donations, setDonations] = useState<Donation[]>([]);
@@ -20,43 +9,15 @@ export default function MyDonationsTab() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // TODO: Replace with your actual Axios instance
-    // axios.get('/api/donations/my/').then(...)
-
     const fetchDonations = async () => {
       try {
-        // Simulating the network request to your Django API
-        setTimeout(() => {
-          setDonations([
-            {
-              id: 1,
-              amount: "1500.00",
-              date: "2026-03-15T10:30:00Z",
-              project: {
-                id: 101,
-                title: "Build a School in Upper Egypt",
-                category: "Education",
-                image:
-                  "https://lh3.googleusercontent.com/aida-public/AB6AXuBdojdw927_3ArMYgx5612cv0S-5MEDdN8sTGt3c7vXK9Fe43HGL3f1Vlkq-U9woUSxno0r27BOrYCHKBXB5O_wDm5aKDktcexRoT-fcVEDqIoC1Bi_rvF1LJemXnSCzui3m5RchOnIM3N7hh41zvh3rPXWnltbop-zWig1_dhV2WrVo_zDZkXvVCAnbZ-HBqD0KOkOH3atNWRzCouyL-w_hOmywJkxlLoUSdyffPFENVew0hI4so-ufa85xRbqNXz9cTljMotCXbA",
-              },
-            },
-            {
-              id: 2,
-              amount: "500.00",
-              date: "2026-04-02T14:15:00Z",
-              project: {
-                id: 102,
-                title: "Emergency Medical Supplies for Cairo Clinic",
-                category: "Medical",
-                image:
-                  "https://lh3.googleusercontent.com/aida-public/AB6AXuBdojdw927_3ArMYgx5612cv0S-5MEDdN8sTGt3c7vXK9Fe43HGL3f1Vlkq-U9woUSxno0r27BOrYCHKBXB5O_wDm5aKDktcexRoT-fcVEDqIoC1Bi_rvF1LJemXnSCzui3m5RchOnIM3N7hh41zvh3rPXWnltbop-zWig1_dhV2WrVo_zDZkXvVCAnbZ-HBqD0KOkOH3atNWRzCouyL-w_hOmywJkxlLoUSdyffPFENVew0hI4so-ufa85xRbqNXz9cTljMotCXbA",
-              },
-            },
-          ]);
-          setIsLoading(false);
-        }, 1200); // 1.2s delay to show off the skeleton loader
+        setIsLoading(true);
+        const data = await getMyDonations();
+        setDonations(data);
       } catch (err) {
+        console.error("Failed to load donations from backend:", err);
         setError("Failed to load donation history. Please try again later.");
+      } finally {
         setIsLoading(false);
       }
     };
@@ -64,7 +25,6 @@ export default function MyDonationsTab() {
     fetchDonations();
   }, []);
 
-  // --- STATE 1: LOADING SKELETON (Docs Section 9.1) ---
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in duration-300">
@@ -82,7 +42,6 @@ export default function MyDonationsTab() {
     );
   }
 
-  // --- STATE 2: ERROR ---
   if (error) {
     return (
       <div className="bg-[#FFF5F5] border-l-4 border-[#E53E3E] p-4 rounded-md">
@@ -91,7 +50,6 @@ export default function MyDonationsTab() {
     );
   }
 
-  // --- STATE 3: EMPTY STATE (Docs Section 9.2) ---
   if (donations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 bg-white border border-[#D1F2EB] rounded-xl animate-in fade-in">
@@ -105,7 +63,6 @@ export default function MyDonationsTab() {
     );
   }
 
-  // --- STATE 4: DATA LOADED ---
   return (
     <div className="animate-in fade-in duration-300 space-y-6">
       <h2 className="text-2xl font-semibold text-on-surface mb-6">Donation History</h2>
@@ -115,14 +72,9 @@ export default function MyDonationsTab() {
           <div
             key={donation.id}
             className="bg-white rounded-xl border border-[#D1F2EB] shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-200 flex overflow-hidden h-auto sm:h-32">
-            {/* Project Image */}
-            <div className="w-1/3 sm:w-32 shrink-0 bg-[#EEEEEE]">
-              <img
-                src={donation.project.image}
-                alt={donation.project.title}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
+            {/* Project Image Fallback (Since backend doesn't send the image URL) */}
+            <div className="w-1/3 sm:w-32 shrink-0 bg-[#F7FAFC] flex items-center justify-center border-r border-[#D1F2EB]">
+              <ImageIcon size={32} className="text-[#CBD5E0]" />
             </div>
 
             {/* Donation Details */}
@@ -130,10 +82,11 @@ export default function MyDonationsTab() {
               <div>
                 <div className="flex justify-between items-start mb-1">
                   <span className="bg-[#D1F2EB] text-[#1F6F5F] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                    {donation.project.category}
+                    Campaign Support
                   </span>
                   <span className="text-xs text-[#A0AEC0]">
-                    {new Date(donation.date).toLocaleDateString("en-US", {
+                    {/* Updated from donation.date to donation.createdAt */}
+                    {new Date(donation.createdAt).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
@@ -149,7 +102,8 @@ export default function MyDonationsTab() {
                   Amount Donated
                 </span>
                 <span className="text-base font-bold text-[#2FA084]">
-                  {Number(donation.amount).toLocaleString("ar-EG")} EGP
+                  {/* Since amount is a number in your interface, we can format it directly */}
+                  {donation.amount.toLocaleString("ar-EG")} EGP
                 </span>
               </div>
             </div>
