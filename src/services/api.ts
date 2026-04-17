@@ -34,10 +34,13 @@ api.interceptors.response.use(
   },
   async (error) => {
     const original = error.config
-    if (error.response?.status === 401 && !original._retry) {
+    const isAuthEndpoint = original?.url?.includes('/accounts/login/') ||
+                           original?.url?.includes('/accounts/token/')
+    if (error.response?.status === 401 && !original._retry && !isAuthEndpoint) {
       original._retry = true
       try {
         const refresh = localStorage.getItem('refresh_token')
+        if (!refresh) throw new Error('no refresh token')
         const { data } = await axios.post(
           `${API_BASE_URL}/accounts/token/refresh/`,
           { refresh }

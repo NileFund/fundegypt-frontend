@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
-import api from '../../services/api';
+import { login as apiLogin } from '../../services/authService';
 import { ROUTES, APP_NAME } from '../../utils/constants';
 import { validateEmail } from '../../utils/validators';
-import { setTokens } from '../../utils/authHelpers';
 
 const LoginPage = () => {
   const location = useLocation();
@@ -57,34 +56,16 @@ const LoginPage = () => {
     setFieldErrors({});
 
     try {
-      const { data } = await api.post('/accounts/login/', {
-        email: formData.email,
-        password: formData.password,
-      });
-
-      const token = data.access || data.token || data.key;
-      const refresh = data.refresh;
-
-      if (token && refresh) setTokens(token, refresh);
-
+      await apiLogin(formData.email, formData.password);
       window.location.href = ROUTES.HOME;
     } catch (error: any) {
-      console.error("Login Error:", error);
       const errorData = error.response?.data;
-
-      if (error.response?.status === 401 || error.response?.status === 400) {
-        if (typeof errorData === 'object' && !errorData.detail && !errorData.non_field_errors) {
-          setFieldErrors(errorData);
-        } else {
-          setGeneralError(
-            errorData?.detail ||
-            errorData?.non_field_errors?.[0] ||
-            "Invalid email or password. Please try again."
-          );
-        }
-      } else {
-        setGeneralError("An unexpected error occurred. Please try again later.");
-      }
+      setGeneralError(
+        errorData?.message ||
+        errorData?.detail ||
+        errorData?.non_field_errors?.[0] ||
+        'Invalid email or password. Please try again.'
+      );
     } finally {
       setIsLoading(false);
     }
