@@ -35,7 +35,7 @@ api.interceptors.response.use(
   async (error) => {
     const original = error.config
     const isAuthEndpoint = original?.url?.includes('/accounts/login/') ||
-                           original?.url?.includes('/accounts/token/')
+      original?.url?.includes('/accounts/token/')
     if (error.response?.status === 401 && !original._retry && !isAuthEndpoint) {
       original._retry = true
       try {
@@ -45,11 +45,19 @@ api.interceptors.response.use(
           `${API_BASE_URL}/accounts/token/refresh/`,
           { refresh }
         )
-        localStorage.setItem('access_token', data.access)
-        original.headers.Authorization = `Bearer ${data.access}`
+
+        // Handle both 'access' and 'accessToken' due to camelization
+        const newAccess = data.access || data.accessToken
+        if (!newAccess) throw new Error('refresh failed - no token in response')
+
+        localStorage.setItem('access_token', newAccess)
+        original.headers.Authorization = `Bearer ${newAccess}`
+
         return api(original)
-      } catch {
-        localStorage.clear()
+      } catch (err) {
+        console.error("Refresh Token failed:", err)
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
         window.location.href = '/login'
       }
     }
