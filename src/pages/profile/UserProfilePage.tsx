@@ -1,1 +1,3 @@
-export default function UserProfilePage() { return <div>UserProfilePage</div> }
+export default function UserProfilePage() {
+  return <div className="p-8 text-text-muted">Profile — coming soon</div>
+}

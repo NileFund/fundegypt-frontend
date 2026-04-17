@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ROUTES, APP_NAME } from '../../../utils/constants';
-import { Menu, X } from 'lucide-react';
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { ROUTES, APP_NAME } from '../../../utils/constants'
+import { Menu, X } from 'lucide-react'
 
 const Navbar = () => {
-  const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isLoggedIn = !!localStorage.getItem('access_token');
+  const navigate = useNavigate()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const isLoggedIn = !!localStorage.getItem('access_token')
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
   return (
-    <nav className="sticky top-0 z-50 glass-shine text-white shadow-xl transition-all duration-300">
+    <nav className="sticky top-0 z-50 glass-shine text-white transition-all duration-300">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           <Link
@@ -41,7 +41,7 @@ const Navbar = () => {
               <div className="hidden md:flex items-center gap-6">
                 <Link to={ROUTES.PROFILE} className="font-medium hover:text-brand-mint transition-colors">Profile</Link>
                 <button
-                  onClick={() => { localStorage.clear(); window.location.href = ROUTES.HOME; }}
+                  onClick={() => { localStorage.clear(); window.location.href = ROUTES.HOME }}
                   className="bg-brand-primary hover:bg-brand-success text-white px-6 py-2 rounded-full font-semibold shadow-md transition-all active:scale-95"
                 >
                   Logout
@@ -81,7 +81,7 @@ const Navbar = () => {
               <Link to={ROUTES.CATEGORY} className="text-lg font-medium hover:text-brand-mint py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Categories</Link>
               <Link to={ROUTES.CREATE_PROJECT} className="text-lg font-medium hover:text-brand-mint py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Start Campaign</Link>
               <button
-                onClick={() => { localStorage.clear(); window.location.href = ROUTES.HOME; }}
+                onClick={() => { localStorage.clear(); window.location.href = ROUTES.HOME }}
                 className="bg-brand-primary text-white py-3 rounded-xl font-semibold"
               >
                 Logout
@@ -91,8 +91,7 @@ const Navbar = () => {
         )}
       </div>
     </nav>
-  );
-};
+  )
+}
 
-
-export default Navbar;
+export default Navbar

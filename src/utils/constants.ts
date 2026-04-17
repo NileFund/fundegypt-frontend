@@ -1,6 +1,6 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 
-export const APP_NAME = import.meta.env.VITE_APP_NAME as string
+export const APP_NAME = import.meta.env.VITE_APP_NAME as string;
 
 export const COLORS = {
   primary: '#2FA084',
@@ -10,7 +10,7 @@ export const COLORS = {
   page: '#EEEEEE',
   danger: '#E53E3E',
   warning: '#F57F17',
-} as const
+} as const;
 
 export const LIMITS = {
   commentMaxLength: 1000,
@@ -20,9 +20,9 @@ export const LIMITS = {
   minDonation: 10,
   maxImageSizeMB: 5,
   maxImageSize: 5 * 1024 * 1024,
-} as const
+} as const;
 
-export const EGYPTIAN_PHONE_REGEX = /^01[0125]\d{8}$/
+export const EGYPTIAN_PHONE_REGEX = /^01[0125]\d{8}$/;
 
 export const ROUTES = {
   HOME: '/',
@@ -34,6 +34,7 @@ export const ROUTES = {
   PROFILE: '/profile',
   EDIT_PROFILE: '/profile/edit',
   MY_DONATIONS: '/profile/donations',
+  MY_PROJECTS: '/profile/projects',
   EXPLORE: '/projects',
   PROJECT_DETAIL: '/projects/:id',
   CREATE_PROJECT: '/projects/create',
@@ -42,4 +43,4 @@ export const ROUTES = {
   CATEGORY: '/categories/:id',
   DELETE_ACCOUNT: '/profile/delete-account',
   NOT_FOUND: '*',
-} as const
+} as const;
