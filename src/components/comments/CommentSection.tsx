@@ -64,7 +64,7 @@ export default function CommentSection({
           </div>
         ) : comments.length > 0 ? (
           <div className="space-y-6">
-            {comments.map(comment => (
+            {Array.isArray(comments) && comments.map(comment => (
               <div key={comment.id}>
                 <CommentItem
                   comment={comment}

@@ -61,12 +61,12 @@ export default function ProjectDetailPage() {
     enabled: !!id,
   })
 
-  const projectTagIds = new Set(project?.tags?.map(t => t.id) ?? [])
-  const similar = (similarData?.results ?? [])
+  const projectTagIds = new Set(Array.isArray(project?.tags) ? project.tags.map(t => t.id) : [])
+  const similar = (Array.isArray(similarData?.results) ? similarData.results : [])
     .filter(p => p.id !== project?.id)
     .sort((a, b) => {
-      const aMatches = a.tags?.filter(t => projectTagIds.has(t.id)).length ?? 0
-      const bMatches = b.tags?.filter(t => projectTagIds.has(t.id)).length ?? 0
+      const aMatches = Array.isArray(a.tags) ? a.tags.filter(t => projectTagIds.has(t.id)).length : 0
+      const bMatches = Array.isArray(b.tags) ? b.tags.filter(t => projectTagIds.has(t.id)).length : 0
       return bMatches - aMatches
     })
     .slice(0, 3)
@@ -148,7 +148,7 @@ export default function ProjectDetailPage() {
   const isOwner = !!user && user.id === project.ownerId
   const canCancel = isOwner && percent < 25 && project.status === 'running'
 
-  const images = project.pictures?.map(i => i.image) ?? []
+  const images = Array.isArray(project.pictures) ? project.pictures.map(i => i.image) : []
   const heroImg = images[imgIndex] ?? null
 
   return (
@@ -201,7 +201,7 @@ export default function ProjectDetailPage() {
 
             {project.tags?.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-6 pt-6 border-t border-gray-100">
-                {project.tags.map(tag => <TagBadge key={tag.id} tag={tag.name} />)}
+                {Array.isArray(project.tags) && project.tags.map(tag => <TagBadge key={tag.id} tag={tag.name} />)}
               </div>
             )}
           </div>
@@ -338,7 +338,7 @@ export default function ProjectDetailPage() {
             <p className="text-sm text-text-muted mt-1">Continue supporting similar campaigns.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {similar.map(p => <ProjectCard key={p.id} project={p} />)}
+            {Array.isArray(similar) && similar.map(p => <ProjectCard key={p.id} project={p} />)}
           </div>
         </section>
       )}

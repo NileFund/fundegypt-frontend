@@ -24,7 +24,7 @@ export default function TagInput({ value, onChange, suggestions }: TagInputProps
 
   const query = input.trim().toLowerCase()
 
-  const filtered = suggestions.filter(
+  const filtered = Array.isArray(suggestions) && suggestions.filter(
     t => t.name.includes(query) && !value.includes(t.name)
   )
 
@@ -49,7 +49,7 @@ export default function TagInput({ value, onChange, suggestions }: TagInputProps
     if ((e.key === 'Enter' || e.key === ',') && query) {
       e.preventDefault()
       // pick top suggestion if exact prefix match, else create new
-      if (filtered.length > 0 && filtered[0].name === query) {
+      if (Array.isArray(filtered) && filtered.length > 0 && filtered[0].name === query) {
         addTag(filtered[0].name)
       } else {
         addTag(query)
@@ -60,16 +60,16 @@ export default function TagInput({ value, onChange, suggestions }: TagInputProps
     }
   }
 
-  const showDropdown = open && (filtered.length > 0 || canCreate)
+  const showDropdown = open && (Array.isArray(filtered) && filtered.length > 0 || canCreate)
 
   return (
     <div ref={containerRef} className="relative">
       {/* Input + chips box */}
       <div
-        className="min-h-[46px] w-full flex flex-wrap gap-1.5 items-center px-3 py-2 rounded-lg ring-1 ring-gray-200 focus-within:ring-2 focus-within:ring-brand-primary transition-all bg-white cursor-text"
+        className="min-h-11.5 w-full flex flex-wrap gap-1.5 items-center px-3 py-2 rounded-lg ring-1 ring-gray-200 focus-within:ring-2 focus-within:ring-brand-primary transition-all bg-white cursor-text"
         onClick={() => { setOpen(true) }}
       >
-        {value.map(tag => (
+        {Array.isArray(value) && value.map(tag => (
           <span
             key={tag}
             className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-primary text-white"
@@ -98,7 +98,7 @@ export default function TagInput({ value, onChange, suggestions }: TagInputProps
       {/* Dropdown */}
       {showDropdown && (
         <ul className="absolute z-30 mt-1 w-full bg-white rounded-lg shadow-lg border border-gray-100 max-h-48 overflow-y-auto py-1">
-          {filtered.map(tag => (
+          {Array.isArray(filtered) && filtered.map(tag => (
             <li key={tag.id}>
               <button
                 type="button"

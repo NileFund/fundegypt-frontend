@@ -53,10 +53,10 @@ function EditForm({ project, categories, allTags }: {
       details:     project.details,
       categoryId:  String(project.category?.id ?? ''),
       totalTarget: String(project.totalTarget),
-      startDate:   project.startTime?.slice(0, 16) ?? '',
-      endDate:     project.endTime?.slice(0, 16) ?? '',
-      tagNames:    project.tags?.map(t => t.name) ?? [] as string[],
-      images:      [] as File[],
+      startDate: project.startTime?.slice(0, 16) ?? '',
+      endDate: project.endTime?.slice(0, 16) ?? '',
+      tagNames: Array.isArray(project.tags) ? project.tags.map(t => t.name) : [] as string[],
+      images: [] as File[],
     },
     validationSchema: schema,
     onSubmit: (values, { setFieldError }) => {
@@ -157,7 +157,7 @@ function EditForm({ project, categories, allTags }: {
                         className={fieldClass(f.touched.categoryId, f.errors.categoryId) + ' appearance-none bg-white'}
                       >
                         <option value="">Select a category</option>
-                        {categories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                        {Array.isArray(categories) && categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                       </select>
                       {f.touched.categoryId && f.errors.categoryId && <p className="text-xs text-danger">{f.errors.categoryId}</p>}
                     </div>
@@ -225,7 +225,7 @@ function EditForm({ project, categories, allTags }: {
               </div>
               <div className="p-8">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {project.pictures?.map(pic => (
+                  {Array.isArray(project.pictures) && project.pictures.map(pic => (
                     <div key={pic.id} className="aspect-video rounded-lg overflow-hidden bg-gray-100">
                       <img src={pic.image} alt="" className="w-full h-full object-cover" />
                     </div>

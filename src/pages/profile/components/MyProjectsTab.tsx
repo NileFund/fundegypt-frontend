@@ -107,59 +107,35 @@ export default function MyProjectsTab() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((project) => {
-          // Guard against division by zero if target is 0
-          const percent =
-            project.totalTarget > 0 ? Math.min(Math.round((project.totalDonated / project.totalTarget) * 100), 100) : 0;
 
-          const barColor = getProgressColor(percent);
-          const daysLeft = calculateDaysLeft(project.endTime);
+        {
+          Array.isArray(projects) && projects.map((project) => {
+            // Guard against division by zero if target is 0
+            const percent =
+              project.totalTarget > 0 ? Math.min(Math.round((project.totalDonated / project.totalTarget) * 100), 100) : 0;
+            const barColor = getProgressColor(percent);
+            const daysLeft = calculateDaysLeft(project.endTime);
 
-          // Grab the first image from the pictures array, or null if empty
-          const displayImage = project.pictures?.length > 0 ? project.pictures[0].image : null;
+            // Grab the first image from the pictures array, or null if empty
+            const displayImage = project.pictures?.length > 0 ? project.pictures[0].image : null;
 
-          return (
-            <div
-              key={project.id}
-              className="bg-white rounded-xl border border-[#D1F2EB] shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-200 overflow-hidden flex flex-col group cursor-pointer"
-              onClick={() => navigate(`${ROUTES.PROJECT_DETAIL.replace(":id", project.id.toString())}`)} // Assuming you want clicking to go to detail page
-            >
-              {/* Image & Badge */}
-              <div className="relative h-48 w-full bg-[#EEEEEE] overflow-hidden flex items-center justify-center">
-                {displayImage ? (
-                  <img
-                    src={displayImage}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <ImageIcon size={48} className="text-[#CBD5E0]" />
-                )}
-
-                <span className="absolute top-3 left-3 bg-[#D1F2EB] text-[#1F6F5F] text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                  {project.category?.name || "General"}
-                </span>
-                <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[#1F6F5F] text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
-                  {project.status || "Active"}
-                </span>
-              </div>
-
-              {/* Content */}
-              <div className="p-5 flex flex-col flex-grow">
-                <h3 className="text-lg font-semibold text-[#1F6F5F] line-clamp-2 leading-tight mb-2">
-                  {project.title}
-                </h3>
-                {/* Mapped 'description' to 'details' per types.ts */}
-                <p className="text-sm text-[#4A5568] line-clamp-2 mb-4 flex-grow">{project.details}</p>
-
-                {/* Progress Bar */}
-                <div className="mt-auto">
-                  <div className="bg-[#D1F2EB] rounded-full h-2 overflow-hidden mb-2">
-                    <div
-                      className="h-full rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${percent}%`, backgroundColor: barColor }}
+            return (
+              <div
+                key={project.id}
+                className="bg-white rounded-xl border border-[#D1F2EB] shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-200 overflow-hidden flex flex-col group cursor-pointer"
+                onClick={() => navigate(`${ROUTES.PROJECT_DETAIL.replace(":id", project.id.toString())}`)} // Assuming you want clicking to go to detail page
+              >
+                {/* Image & Badge */}
+                <div className="relative h-48 w-full bg-[#EEEEEE] overflow-hidden flex items-center justify-center">
+                  {displayImage ? (
+                    <img
+                      src={displayImage}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                  </div>
+                  ) : (
+                    <ImageIcon size={48} className="text-[#CBD5E0]" />
+                  )}
 
                   <div className="flex justify-between items-end mb-4">
                     <div>
@@ -175,29 +151,61 @@ export default function MyProjectsTab() {
                     </span>
                   </div>
 
-                  {/* Footer Metrics */}
-                  <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                    <div className="flex items-center text-sm text-[#4A5568]">
-                      <Star
-                        size={16}
-                        className={
-                          project.averageRating > 0 ? "text-[#F6AD55] mr-1 fill-[#F6AD55]" : "text-[#D1F2EB] mr-1"
-                        }
-                      />
-                      <span className="font-medium mt-0.5">
-                        {project.averageRating > 0 ? project.averageRating.toFixed(1) : "New"}
-                      </span>
+                  {/* Content */}
+                  <div className="p-5 flex flex-col flex-grow">
+                    <h3 className="text-lg font-semibold text-[#1F6F5F] line-clamp-2 leading-tight mb-2">
+                      {project.title}
+                    </h3>
+                    {/* Mapped 'description' to 'details' per types.ts */}
+                    <p className="text-sm text-[#4A5568] line-clamp-2 mb-4 flex-grow">{project.details}</p>
+
+                    {/* Progress Bar */}
+                    <div className="mt-auto">
+                      <div className="bg-[#D1F2EB] rounded-full h-2 overflow-hidden mb-2">
+                        <div
+                          className="h-full rounded-full transition-all duration-1000 ease-out"
+                          style={{ width: `${percent}%`, backgroundColor: barColor }}
+                        />
+                      </div>
+
+                      <div className="flex justify-between items-end mb-4">
+                        <div>
+                          <span className="text-sm font-bold text-[#1F6F5F]">
+                            {Number(project.totalDonated).toLocaleString("ar-EG")} EGP
+                          </span>
+                          <span className="text-xs text-[#4A5568] block mt-0.5">
+                            raised of {Number(project.totalTarget).toLocaleString("ar-EG")}
+                          </span>
+                        </div>
+                        <span className="text-sm font-bold" style={{ color: barColor }}>
+                          {percent}%
+                        </span>
+                      </div>
+
+                      {/* Footer Metrics */}
+                      <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                        <div className="flex items-center text-sm text-[#4A5568]">
+                          <Star
+                            size={16}
+                            className={
+                              project.averageRating > 0 ? "text-[#F6AD55] mr-1 fill-[#F6AD55]" : "text-[#D1F2EB] mr-1"
+                            }
+                          />
+                          <span className="font-medium mt-0.5">
+                            {project.averageRating > 0 ? project.averageRating.toFixed(1) : "New"}
+                          </span>
+                        </div>
+                        <span className="bg-[#FFF8E1] text-[#F57F17] text-xs font-semibold px-2.5 py-1 rounded-full">
+                          {daysLeft} days left
+                        </span>
+                      </div>
                     </div>
-                    <span className="bg-[#FFF8E1] text-[#F57F17] text-xs font-semibold px-2.5 py-1 rounded-full">
-                      {daysLeft} days left
-                    </span>
                   </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+                );
+          })
+        }
+              </div >
+    </div >
+      );
 }

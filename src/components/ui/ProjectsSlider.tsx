@@ -98,7 +98,7 @@ export default function ProjectsSlider({
 
       {showIndicators && projects.length > 1 && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-          {projects.map((_, idx) => (
+          {Array.isArray(projects) && projects.map((_, idx) => (
             <Button
               key={idx}
               onClick={() => setCurrent(idx)}
