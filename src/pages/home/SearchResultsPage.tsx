@@ -76,7 +76,7 @@ export default function SearchResultsPage() {
 
   return (
     <div className="bg-surface-page min-h-screen">
-      <div className="pt-8 pb-12">
+      <div className="mt-8 pb-12">
         <SearchBar showInSearchPage />
       </div>
 
@@ -118,7 +118,7 @@ export default function SearchResultsPage() {
         {/* Results Grid */}
         {sortedResults.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedResults.map(project => (
+            {Array.isArray(sortedResults) && sortedResults.map(project => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>

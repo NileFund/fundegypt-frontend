@@ -133,7 +133,7 @@ export default function CategoryDetailPage() {
         {/* Projects Grid */}
         {sortedProjects.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedProjects.map(project => (
+            {Array.isArray(sortedProjects) && sortedProjects.map(project => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>

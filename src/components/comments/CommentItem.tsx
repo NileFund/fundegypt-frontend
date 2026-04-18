@@ -254,7 +254,7 @@ export default function CommentItem({
       {/* Replies */}
       {comment.replies && comment.replies.length > 0 && (
         <div className="mt-4 space-y-3">
-          {comment.replies.map(reply => (
+          {comment && Array.isArray(comment.replies) && comment.replies.map(reply => (
             <CommentItem
               key={reply.id}
               comment={reply}

@@ -14,12 +14,12 @@ const nowLocal = () => {
 }
 
 const schema = Yup.object({
-  title:       Yup.string().min(10, 'At least 10 characters').required('Required'),
-  details:     Yup.string().min(50, 'At least 50 characters').required('Required'),
-  categoryId:  Yup.string().required('Pick a category'),
+  title: Yup.string().min(10, 'At least 10 characters').required('Required'),
+  details: Yup.string().min(50, 'At least 50 characters').required('Required'),
+  categoryId: Yup.string().required('Pick a category'),
   totalTarget: Yup.number().min(1, 'Must be at least 1 EGP').required('Required'),
-  startDate:   Yup.string().required('Required').test('not-past', 'Cannot be in the past', val => !val || val >= nowLocal()),
-  endDate:     Yup.string()
+  startDate: Yup.string().required('Required').test('not-past', 'Cannot be in the past', val => !val || val >= nowLocal()),
+  endDate: Yup.string()
     .required('Required')
     .test('after-start', 'Must be after start date', function (val) {
       return !this.parent.startDate || !val || val > this.parent.startDate
@@ -27,17 +27,16 @@ const schema = Yup.object({
 })
 
 const fieldClass = (touched: boolean | undefined, error: string | undefined) =>
-  `w-full bg-white rounded-lg px-4 py-3 text-sm text-text-body outline-none transition-all placeholder:text-text-muted ${
-    touched && error
-      ? 'ring-2 ring-danger border-transparent'
-      : 'ring-1 ring-gray-200 focus:ring-2 focus:ring-brand-primary border-transparent'
+  `w-full bg-white rounded-lg px-4 py-3 text-sm text-text-body outline-none transition-all placeholder:text-text-muted ${touched && error
+    ? 'ring-2 ring-danger border-transparent'
+    : 'ring-1 ring-gray-200 focus:ring-2 focus:ring-brand-primary border-transparent'
   }`
 
 export default function CreateProjectPage() {
   const navigate = useNavigate()
 
   const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
-  const { data: allTags }    = useQuery({ queryKey: ['tags'],       queryFn: getTags })
+  const { data: allTags } = useQuery({ queryKey: ['tags'], queryFn: getTags })
 
   const mutation = useMutation({
     mutationFn: (formData: FormData) => createProject(formData),
@@ -46,24 +45,24 @@ export default function CreateProjectPage() {
 
   const f = useFormik({
     initialValues: {
-      title:       '',
-      details:     '',
-      categoryId:  '',
+      title: '',
+      details: '',
+      categoryId: '',
       totalTarget: '',
-      startDate:   '',
-      endDate:     '',
-      tagNames:    [] as string[],
-      images:      [] as File[],
+      startDate: '',
+      endDate: '',
+      tagNames: [] as string[],
+      images: [] as File[],
     },
     validationSchema: schema,
     onSubmit: (values, { setFieldError }) => {
       const form = new FormData()
-      form.append('title',        values.title)
-      form.append('details',      values.details)
-      form.append('category',     values.categoryId)
+      form.append('title', values.title)
+      form.append('details', values.details)
+      form.append('category', values.categoryId)
       form.append('total_target', values.totalTarget)
-      form.append('start_time',   values.startDate)
-      form.append('end_time',     values.endDate)
+      form.append('start_time', values.startDate)
+      form.append('end_time', values.endDate)
       values.tagNames.forEach(name => form.append('tag_names', name))
       values.images.forEach(img => form.append('uploaded_images', img))
 
@@ -72,11 +71,11 @@ export default function CreateProjectPage() {
           const details = (err as { response?: { data?: { details?: Record<string, string[]> } } })
             ?.response?.data?.details
           if (details) {
-            if (details.start_time)   setFieldError('startDate',   details.start_time[0])
-            if (details.end_time)     setFieldError('endDate',     details.end_time[0])
-            if (details.title)        setFieldError('title',       details.title[0])
-            if (details.details)      setFieldError('details',     details.details[0])
-            if (details.category)     setFieldError('categoryId',  details.category[0])
+            if (details.start_time) setFieldError('startDate', details.start_time[0])
+            if (details.end_time) setFieldError('endDate', details.end_time[0])
+            if (details.title) setFieldError('title', details.title[0])
+            if (details.details) setFieldError('details', details.details[0])
+            if (details.category) setFieldError('categoryId', details.category[0])
             if (details.total_target) setFieldError('totalTarget', details.total_target[0])
           }
         },
@@ -119,7 +118,7 @@ export default function CreateProjectPage() {
                 {f.touched.title && f.errors.title && <p className="text-xs text-danger">{f.errors.title}</p>}
               </div>
 
-             
+
               <div className="space-y-2">
                 <label className="block text-xs font-medium uppercase tracking-widest text-text-muted">Project Description</label>
                 <textarea
@@ -145,7 +144,7 @@ export default function CreateProjectPage() {
                     className={fieldClass(f.touched.categoryId, f.errors.categoryId) + ' appearance-none bg-white'}
                   >
                     <option value="">Select a category</option>
-                    {categories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    {Array.isArray(categories) && categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                   {f.touched.categoryId && f.errors.categoryId && <p className="text-xs text-danger">{f.errors.categoryId}</p>}
                 </div>
@@ -230,7 +229,7 @@ export default function CreateProjectPage() {
                 </label>
                 {f.values.images.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {f.values.images.map((img, i) => (
+                    {Array.isArray(f.values.images) && f.values.images.map((img, i) => (
                       <span key={i} className="text-xs bg-brand-mint text-text-primary px-2 py-1 rounded-full">{img.name}</span>
                     ))}
                   </div>

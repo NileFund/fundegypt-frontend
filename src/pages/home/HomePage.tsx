@@ -96,7 +96,7 @@ export default function HomePage() {
 
   const isLoading = topRatedLoading || featuredLoading || latestLoading
 
-  const sliderItems = topRatedProjects.map(p => ({
+  const sliderItems = Array.isArray(topRatedProjects) && topRatedProjects.map(p => ({
     id: p.id,
     image: p.pictures?.[0]?.image || '',
     title: p.title,
@@ -192,7 +192,7 @@ export default function HomePage() {
                   </Link>
                 </div>
 
-                {sliderItems.length > 0 ? (
+                {Array.isArray(sliderItems) && sliderItems.length > 0 ? (
                   <ProjectsSlider
                     projects={topRatedProjects}
                     autoPlay
@@ -231,7 +231,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {featuredProjects.map(p => (
+                  {Array.isArray(featuredProjects) && featuredProjects.map(p => (
                     <ProjectCard key={p.id} project={p} />
                   ))}
                 </div>
@@ -254,7 +254,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {latestProjects.map(p => (
+                  {Array.isArray(latestProjects) && latestProjects.map(p => (
                     <ProjectCard key={p.id} project={p} />
                   ))}
                 </div>

@@ -102,7 +102,7 @@ export default function MyDonationsTab() {
 
       {/* List */}
       <div className="space-y-3">
-        {donations.map((donation) => (
+        {Array.isArray(donations) && donations.map((donation) => (
           <div
             key={donation.id}
             onClick={() =>
@@ -130,7 +130,7 @@ export default function MyDonationsTab() {
                 {(donation as any).projectTitle}
               </p>
               <p className="text-xs text-[#A0AEC0] mt-0.5">
-               {formatDate((donation as any).createdAt)}
+                {formatDate((donation as any).createdAt)}
               </p>
             </div>
 
