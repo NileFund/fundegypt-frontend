@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -41,7 +42,7 @@ export default function ProjectDetailPage() {
   const [showReportDialog, setShowReportDialog] = useState(false)
   const [reportReason, setReportReason] = useState('')
   const [reportError, setReportError] = useState('')
-  const [reportSuccess, setReportSuccess] = useState('') 
+  const [reportSuccess, setReportSuccess] = useState('')
 
   const { data: project, isLoading: projectLoading } = useQuery({
     queryKey: ['project', id],
@@ -85,15 +86,15 @@ export default function ProjectDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['donation-summary', id] })
     },
     onError: (e: any) => {
-        const data = e?.response?.data;
-        const msg =
+      const data = e?.response?.data;
+      const msg =
         data?.details?.non_field_errors?.[0] ||
         data?.details?.amount?.[0] ||
         data?.details?.project?.[0] ||
         data?.message ||
-       'Donation failed. Please try again.';
-      setDonationError(msg);  
-},
+        'Donation failed. Please try again.';
+      setDonationError(msg);
+    },
   })
 
   const cancelMutation = useMutation({
@@ -143,30 +144,29 @@ export default function ProjectDetailPage() {
     donateMutation.mutate()
   }
   const handleReportProject = async () => {
-  try {
-    setReportError('')
-    setReportSuccess('')
-    await reportProject(Number(id), reportReason.trim() || undefined)
-    setReportSuccess('Project reported successfully. Thank you for your feedback.')
-    setReportReason('')
-    setShowReportDialog(false)
-     setTimeout(() => {
+    try {
+      setReportError('')
       setReportSuccess('')
-    }, 4000)
-  } catch (err: any) {
-    const data = err?.response?.data
-    const msg =
-      data?.detail ||
-      data?.message ||
-      data?.error ||
-      'Failed to report project'
-    setReportError(msg)
+      await reportProject(Number(id), reportReason.trim() || undefined)
+      setReportSuccess('Project reported successfully. Thank you for your feedback.')
+      setReportReason('')
+      setShowReportDialog(false)
+      setTimeout(() => {
+        setReportSuccess('')
+      }, 4000)
+    } catch (err: any) {
+      const data = err?.response?.data
+      const msg =
+        data?.detail ||
+        data?.message ||
+        data?.error ||
+        'Failed to report project'
+      setReportError(msg)
+    }
   }
-}
 
   if (projectLoading) return <Spinner centered />
   if (!project) return <p className="text-center py-16 text-text-muted">Project not found.</p>
-  console.log(project.status)
 
   const raised = summary?.totalDonated ?? project.totalDonated
   const target = summary?.totalTarget ?? project.totalTarget
@@ -234,11 +234,11 @@ export default function ProjectDetailPage() {
             )}
           </div>
 
-                 <RatingSection
-             projectId={Number(id)}
-             isOwner={isOwner}
+          <RatingSection
+            projectId={Number(id)}
+            isOwner={isOwner}
             isAuthenticated={!!user}
-             />
+          />
 
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-8">
             <CommentSection
@@ -327,22 +327,22 @@ export default function ProjectDetailPage() {
               <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-1">Campaign by</p>
               <p className="text-sm font-medium text-text-primary truncate">{project.owner}</p>
             </div>
-              {canReport && (
+            {canReport && (
               <div className="border-t border-gray-100 pt-4">
-              <button
-              onClick={() => setShowReportDialog(true)}
-              className="w-full flex items-center justify-center gap-2 text-sm text-red-500 hover:text-red-600 transition-colors">
-                     
-             <Flag size={16} />
-              Report Project
-             </button>
-             {reportSuccess && (
-             <div className="mt-3 p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
-             {reportSuccess}
-             </div>
-             )}
-             </div>
-             )}
+                <button
+                  onClick={() => setShowReportDialog(true)}
+                  className="w-full flex items-center justify-center gap-2 text-sm text-red-500 hover:text-red-600 transition-colors">
+
+                  <Flag size={16} />
+                  Report Project
+                </button>
+                {reportSuccess && (
+                  <div className="mt-3 p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
+                    {reportSuccess}
+                  </div>
+                )}
+              </div>
+            )}
             {isOwner && (
               <div className="flex flex-col gap-2 border-t border-gray-100 pt-4">
                 <Button variant="secondary" onClick={() => navigate(`/projects/${id}/edit`)}>
@@ -372,41 +372,41 @@ export default function ProjectDetailPage() {
         </section>
       )}
       {showReportDialog && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-xl p-6 w-full max-w-md space-y-4">
-      <h3 className="text-lg font-semibold text-text-primary">
-        Report this project
-      </h3>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md space-y-4">
+            <h3 className="text-lg font-semibold text-text-primary">
+              Report this project
+            </h3>
 
-      <textarea
-        value={reportReason}
-        onChange={(e) => setReportReason(e.target.value)}
-        placeholder="Optional: describe the issue (spam, fraud, etc.)"
-        className="w-full border border-gray-200 rounded-lg p-3 text-sm"
-        rows={3}
-      />
+            <textarea
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              placeholder="Optional: describe the issue (spam, fraud, etc.)"
+              className="w-full border border-gray-200 rounded-lg p-3 text-sm"
+              rows={3}
+            />
 
-      {reportError && (
-        <p className="text-xs text-red-500">{reportError}</p>
+            {reportError && (
+              <p className="text-xs text-red-500">{reportError}</p>
+            )}
+
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="secondary"
+                onClick={() => setShowReportDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-red-500 hover:bg-red-600 text-white"
+                onClick={handleReportProject}
+              >
+                Submit Report
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
-
-      <div className="flex gap-2 justify-end">
-        <Button
-          variant="secondary"
-          onClick={() => setShowReportDialog(false)}
-        >
-          Cancel
-        </Button>
-        <Button
-          className="bg-red-500 hover:bg-red-600 text-white"
-          onClick={handleReportProject}
-        >
-          Submit Report
-        </Button>
-      </div>
-    </div>
-  </div>
-)}
     </div>
   )
 }

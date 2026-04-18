@@ -10,7 +10,6 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const isLoggedIn = !!localStorage.getItem('access_token')
   const user = useAuth().user;
-  console.log('Navbar user:', user);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
   return (
