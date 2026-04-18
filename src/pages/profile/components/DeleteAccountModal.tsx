@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { X, AlertTriangle } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // Added for routing
-import { useAuth } from "../../../context/useAuth"; // Adjust path to your auth context
-import { deleteAccount } from "../../../services/authService"; // Adjust path to your API services
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/useAuth";
+import { deleteAccount } from "../../../services/authService";
 
 interface DeleteAccountModalProps {
   onClose: () => void;
@@ -13,7 +13,6 @@ export default function DeleteAccountModal({ onClose }: DeleteAccountModalProps)
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Bring in global logout and navigation
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -29,113 +28,108 @@ export default function DeleteAccountModal({ onClose }: DeleteAccountModalProps)
     setIsLoading(true);
 
     try {
-      // 1. Call the real Django endpoint to delete the user record
       await deleteAccount(password);
-
-      // 2. Clear local storage tokens and reset the AuthContext state
       await logout();
-
-      // 3. Redirect back to the landing page
       navigate("/");
-
-      // Optional: Close modal (though the component will likely unmount on redirect)
       onClose();
     } catch (err: any) {
-      // Safely extract Django's error message (e.g., "Incorrect password")
-      const backendError = err.response?.data?.detail || err.response?.data?.error;
-      setError(backendError || "Something went wrong. Please try again.");
+      // --- THE BULLETPROOF ERROR CATCHER ---
+
+      // 1. Log the exact error to your browser console (F12 -> Console)
+      // so you can see exactly what Django sent!
+      console.error("Django Error Payload:", err.response?.data);
+
+      const data = err.response?.data;
+
+      // 2. Set a strong default message so it never fails silently
+      let errorMessage = "Incorrect password. Account deletion failed.";
+
+      // 3. Try to extract the specific text Django sent
+      if (data) {
+        if (Array.isArray(data.password)) {
+          errorMessage = data.password[0]; // Catches {"password": ["Incorrect..."]}
+        } else if (typeof data.password === "string") {
+          errorMessage = data.password;
+        } else if (data.detail) {
+          errorMessage = data.detail;
+        } else if (data.non_field_errors) {
+          errorMessage = data.non_field_errors[0];
+        }
+      }
+
+      // 4. Trigger the red UI text
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
-    // Overlay: Deepened to a darker blur to fit the cyberpunk aesthetic
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md animate-in fade-in duration-200">
-      {/* Modal Container: Warm dark slate with subtle orange glow border */}
-      <div className="bg-[#0f172a] border border-orange-500/20 rounded-[16px] w-full max-w-[480px] shadow-[0_0_30px_rgba(249,115,22,0.15)] overflow-hidden animate-in zoom-in-95 duration-200">
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-slate-800">
-          <h3 className="text-lg font-semibold text-orange-500 flex items-center">
-            <AlertTriangle size={20} className="text-red-500 mr-2 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white rounded-[16px] w-full max-w-[480px] shadow-[0_8px_24px_rgba(0,0,0,0.15)] overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="flex justify-between items-center p-6 border-b border-gray-100">
+          <h3 className="text-lg font-semibold text-red-600 flex items-center">
+            <AlertTriangle size={20} className="text-red-500 mr-2" />
             Delete Account
           </h3>
           <button
             onClick={onClose}
-            className="text-slate-500 hover:text-orange-400 transition-colors p-1 rounded-md hover:bg-slate-800"
+            className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-md hover:bg-gray-100"
             aria-label="Close dialog"
             disabled={isLoading}>
             <X size={20} />
           </button>
         </div>
 
-        {/* Body */}
         <form onSubmit={handleDelete}>
           <div className="p-6 space-y-4">
-            <p className="text-slate-300 text-sm leading-relaxed">
+            <p className="text-gray-600 text-sm leading-relaxed">
               Are you sure you want to delete your account? This action will hide your profile and cancel any active
               campaigns. For financial security, your past donation records will be anonymized after 30 days.
             </p>
-            <p className="text-slate-300 text-sm font-medium">
-              This action <span className="text-red-500 font-bold">cannot</span> be undone.
+            <p className="text-gray-600 text-sm font-medium">
+              This action <span className="text-red-600 font-bold">cannot</span> be undone.
             </p>
 
             <div className="pt-2">
-              <label htmlFor="password" className="block text-sm font-medium text-orange-400/80 mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-1.5">
                 Confirm your password
               </label>
               <input
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (error) setError(null); // Clear the error when they start typing again
+                }}
                 placeholder="Enter your password"
                 disabled={isLoading}
-                className={`w-full bg-[#1e293b] rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-all duration-200 ${
+                className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 ${
                   error
-                    ? "border border-red-500/50 focus:border-red-500 focus:ring-red-500/20"
-                    : "border border-slate-700 focus:border-orange-500 focus:ring-orange-500/20"
+                    ? "border-red-500 focus:border-red-600 focus:ring-red-500/20"
+                    : "border-gray-300 focus:border-[#2FA084] focus:ring-[#2FA084]/20"
                 }`}
               />
+              {/* This is where the error message renders */}
               {error && (
-                <p className="mt-1.5 text-xs text-red-400 font-medium animate-in slide-in-from-top-1">{error}</p>
+                <p className="mt-1.5 text-xs text-red-600 font-medium animate-in slide-in-from-top-1">{error}</p>
               )}
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-4 bg-[#0B1120] border-t border-slate-800">
+          <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
             <button
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors disabled:opacity-50">
+              className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors disabled:opacity-50">
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-red-600/90 hover:bg-red-500 text-white shadow-[0_0_15px_rgba(220,38,38,0.4)] font-medium text-sm px-6 py-2 rounded-lg transition-all duration-200 flex items-center justify-center min-w-[140px] disabled:opacity-70 disabled:cursor-not-allowed">
-              {isLoading ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Deleting...
-                </span>
-              ) : (
-                "Delete Account"
-              )}
+              className="bg-red-600 hover:bg-red-700 text-white font-medium text-sm px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center min-w-[140px] disabled:opacity-70 disabled:cursor-not-allowed">
+              {isLoading ? "Deleting..." : "Delete Account"}
             </button>
           </div>
         </form>
