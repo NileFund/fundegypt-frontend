@@ -48,18 +48,42 @@ export interface Project {
   createdAt: string
 }
 
-export interface Donation {
-  id: number
-  project: Pick<Project, 'id' | 'title'>
-  amount: number
-  createdAt: string
-}
-
-export interface Comment {
-  id: number
+export interface Comment {  id: number
   user: Pick<User, 'id' | 'firstName' | 'lastName' | 'profilePic'>
   text: string
   createdAt: string
   replies: Comment[]
   parentId: number | null
+}
+export interface Donation {
+  id: number;
+  amount: number;
+  project: number;
+  project_title?: string;
+  project_image?: string;
+  donor: number;
+  donor_name?: string;
+  created_at: string;
+}
+ 
+export interface DonationSummary {
+  project_id: number;
+  target: number;
+  total_donated: number;
+  remaining: number;
+  percentage: number;
+}
+ 
+export interface TopDonor {
+  email: string;
+  full_name: string;
+  profile_picture: string | null;
+  total: number;
+}
+ 
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
 }

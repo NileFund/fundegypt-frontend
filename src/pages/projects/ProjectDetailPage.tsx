@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { getProject, getDonationSummary, cancelProject, getProjects } from '../../services/projectService'
-import { donate } from '../../services/donationService'
+import { createDonation } from '../../services/donationService'
 import { useAuth } from '../../context/useAuth'
 import { formatEGP, formatDate, getPercent } from '../../utils/formatters'
 import ProgressBar from '../../components/ui/ProgressBar'
@@ -72,7 +72,7 @@ export default function ProjectDetailPage() {
     .slice(0, 3)
 
   const donateMutation = useMutation({
-    mutationFn: () => donate(Number(id), Number(amount)),
+    mutationFn: () => createDonation(Number(id), Number(amount)),
     onSuccess: () => {
       setDonationSuccess(true)
       setAmount('')
@@ -130,6 +130,7 @@ export default function ProjectDetailPage() {
 
   if (projectLoading) return <Spinner centered />
   if (!project) return <p className="text-center py-16 text-text-muted">Project not found.</p>
+  console.log(project.status)
 
   const raised = summary?.totalDonated ?? project.totalDonated
   const target = summary?.totalTarget ?? project.totalTarget
