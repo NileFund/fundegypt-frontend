@@ -78,7 +78,16 @@ export default function ProjectDetailPage() {
       setAmount('')
       queryClient.invalidateQueries({ queryKey: ['donation-summary', id] })
     },
-    onError: () => setDonationError('Donation failed. Please try again.'),
+    onError: (e: any) => {
+        const data = e?.response?.data;
+        const msg =
+        data?.details?.non_field_errors?.[0] ||
+        data?.details?.amount?.[0] ||
+        data?.details?.project?.[0] ||
+        data?.message ||
+       'Donation failed. Please try again.';
+      setDonationError(msg);  
+},
   })
 
   const cancelMutation = useMutation({

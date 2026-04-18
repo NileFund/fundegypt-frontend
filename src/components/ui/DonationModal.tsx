@@ -6,6 +6,7 @@ import { LIMITS } from '../../utils/constants';
 interface DonationModalProps {
   projectId: number;
   projectTitle: string;
+  projectStatus: string; 
   onSuccess?: () => void;
 }
 
@@ -16,14 +17,19 @@ const QUICK_AMOUNTS = [50, 100, 250, 500];
 export default function DonationModal({
   projectId,
   projectTitle,
+  projectStatus,
   onSuccess,
 }: DonationModalProps) {
+  console.log('projectStatus:', projectStatus); 
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState('');
   const [modalState, setModalState] = useState<ModalState>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
+  const isDisabled = projectStatus !== 'running';
+
   const open = () => {
+    if (isDisabled) return; 
     setIsOpen(true);
     setAmount('');
     setModalState('idle');
@@ -54,6 +60,11 @@ export default function DonationModal({
   };
 
   const handleSubmit = async () => {
+    if (isDisabled) {
+      setErrorMsg('This project is not accepting donations.');
+      return;
+    }
+
     const err = validate();
     if (err) {
       setErrorMsg(err);
@@ -68,8 +79,12 @@ export default function DonationModal({
       setModalState('success');
       onSuccess?.();
     } catch (e: any) {
-      const msg =
-        e?.response?.data?.detail ||
+      console.log('Donation error response:', e?.response?.data);
+        const data = e?.response?.data;
+        const msg =
+        data?.detail ||
+        data?.non_field_errors?.[0] ||
+        (typeof data === 'string' ? data : null) ||
         'Donation failed. Please try again.';
       setErrorMsg(msg);
       setModalState('error');
@@ -85,10 +100,17 @@ export default function DonationModal({
       {/* Donate Button */}
       <button
         onClick={open}
-        className="w-full flex items-center justify-center gap-2 bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-semibold text-base px-8 py-3 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#2FA084] focus:ring-offset-2"
+        disabled={isDisabled}
+        className={`w-full flex items-center justify-center gap-2 font-semibold text-base px-8 py-3 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
+          ${
+            isDisabled
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-[#2FA084] hover:bg-[#1F6F5F] text-white focus:ring-[#2FA084]'
+          }
+        `}
       >
         <Heart size={18} />
-        Donate Now
+        {isDisabled ? 'Campaign Completed' : 'Donate Now'}
       </button>
 
       {/* Backdrop */}
@@ -127,15 +149,11 @@ export default function DonationModal({
                   <span className="font-semibold text-[#2FA084]">
                     {parseFloat(amount).toLocaleString('ar-EG')} EGP
                   </span>{' '}
-                  to{' '}
-                  <span className="font-medium">
-                    "{projectTitle}"
-                  </span>{' '}
-                  was successful.
+                  to <span className="font-medium">"{projectTitle}"</span> was successful.
                 </p>
                 <button
                   onClick={close}
-                  className="bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-medium px-8 py-2.5 rounded-lg transition-colors duration-200"
+                  className="bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-medium px-8 py-2.5 rounded-lg"
                 >
                   Close
                 </button>
@@ -161,19 +179,12 @@ export default function DonationModal({
 
                 {/* Quick Amounts */}
                 <div className="mb-4">
-                  <p className="text-xs font-medium text-[#4A5568] uppercase tracking-wide mb-2">
-                    Quick Select
-                  </p>
                   <div className="grid grid-cols-4 gap-2">
                     {QUICK_AMOUNTS.map((val) => (
                       <button
                         key={val}
                         onClick={() => handleQuickAmount(val)}
-                        className={`py-2 rounded-lg text-sm font-medium border transition-colors duration-200 ${
-                          amount === String(val)
-                            ? 'bg-[#2FA084] border-[#2FA084] text-white'
-                            : 'border-[#D1F2EB] text-[#2FA084] hover:bg-[#D1F2EB]'
-                        }`}
+                        className="py-2 rounded-lg text-sm font-medium border border-[#D1F2EB] text-[#2FA084] hover:bg-[#D1F2EB]"
                       >
                         {val} EGP
                       </button>
@@ -181,82 +192,32 @@ export default function DonationModal({
                   </div>
                 </div>
 
-                {/* Custom Amount */}
-                <div className="mb-5">
-                  <label
-                    htmlFor="donation-amount"
-                    className="block text-xs font-medium text-[#4A5568] uppercase tracking-wide mb-2"
-                  >
-                    Custom Amount (EGP)
-                  </label>
+                {/* Input */}
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={handleAmountChange}
+                  className="w-full border rounded-lg px-4 py-3"
+                  placeholder={`Min. ${LIMITS.minDonation} EGP`}
+                />
 
-                  <div className="relative">
-                    <input
-                      id="donation-amount"
-                      type="number"
-                      min={LIMITS.minDonation}
-                      step="1"
-                      value={amount}
-                      onChange={handleAmountChange}
-                      placeholder={`Min. ${LIMITS.minDonation} EGP`}
-                      className={`w-full border rounded-lg px-4 py-3 text-[#1F6F5F] font-semibold text-lg placeholder:text-[#A0AEC0] placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-[#2FA084] transition-colors ${
-                        errorMsg
-                          ? 'border-[#E53E3E] bg-[#FFF5F5]'
-                          : 'border-[#D1F2EB]'
-                      }`}
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-[#A0AEC0]">
-                      EGP
-                    </span>
+                {errorMsg && (
+                  <div className="flex items-center gap-1.5 mt-2 text-red-500 text-sm">
+                    <AlertCircle size={14} />
+                    <span>{errorMsg}</span>
                   </div>
-
-                  {errorMsg && (
-                    <div className="flex items-center gap-1.5 mt-2 text-[#E53E3E] text-sm">
-                      <AlertCircle size={14} />
-                      <span>{errorMsg}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Divider */}
-                <div className="h-px bg-[#EEEEEE] mb-5" />
-
-                {/* Summary */}
-                {amount &&
-                  !isNaN(parseFloat(amount)) &&
-                  parseFloat(amount) > 0 && (
-                    <div className="bg-[#D1F2EB] rounded-lg px-4 py-3 mb-5 flex justify-between items-center">
-                      <span className="text-sm text-[#1F6F5F]">
-                        Total Donation
-                      </span>
-                      <span className="font-bold text-[#1F6F5F] text-lg">
-                        {parseFloat(amount).toLocaleString('ar-EG')} EGP
-                      </span>
-                    </div>
-                  )}
+                )}
 
                 {/* Submit */}
                 <button
                   onClick={handleSubmit}
-                  disabled={modalState === 'loading'}
-                  className="w-full bg-[#2FA084] hover:bg-[#1F6F5F] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                  disabled={modalState === 'loading' || isDisabled}
+                  className="w-full bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-semibold py-3 rounded-lg mt-5"
                 >
-                  {modalState === 'loading' ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Processing…
-                    </>
-                  ) : (
-                    <>
-                      <Heart size={16} />
-                      Confirm Donation
-                    </>
-                  )}
+                  {modalState === 'loading'
+                    ? 'Processing...'
+                    : 'Confirm Donation'}
                 </button>
-
-                <p className="text-center text-xs text-[#A0AEC0] mt-3">
-                  Your support makes a real difference 🇪🇬
-                </p>
               </>
             )}
           </div>
