@@ -72,7 +72,9 @@ export async function updateProfile(data: FormData) {
 }
 
 // DELETE /accounts/me/ — delete account
-export async function deleteAccount(password: string): Promise<void> {
-  // Axios requires a 'data' object when sending a body with a DELETE request
-  await api.delete("/accounts/me/", { data: { password } });
+export async function deleteAccount(password: string) {
+  const response = await api.delete("/accounts/me/delete/", {
+    data: { password: password },
+  });
+  return response.data;
 }

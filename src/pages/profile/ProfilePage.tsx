@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { User as UserIcon, Calendar, Share2 } from "lucide-react"; // Replaced Material Icons with Lucide
+import { User as UserIcon, Calendar, Share2 } from "lucide-react";
 import { ROUTES } from "../../utils/constants";
 import EditProfileModal from "./components/EditProfileModal";
 import { useAuth } from "../../context/useAuth";
@@ -10,7 +10,6 @@ export default function ProfilePage() {
   const location = useLocation();
   const { user, isLoading } = useAuth();
 
-  // --- STATE 1: LOADING (Light Theme) ---
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#f9f9ff] flex items-center justify-center">
@@ -22,7 +21,6 @@ export default function ProfilePage() {
     );
   }
 
-  // --- STATE 2: NO USER FALLBACK (Light Theme) ---
   if (!user) {
     return (
       <div className="min-h-screen bg-[#f9f9ff] flex items-center justify-center">
@@ -33,15 +31,12 @@ export default function ProfilePage() {
     );
   }
 
-  // Safe Date Formatting: Fallback to "Recently Joined" if backend doesn't send the date
   const memberSince = user.createdAt
     ? new Date(user.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })
     : "Recently Joined";
 
   return (
     <div className="text-on-surface bg-[#f9f9ff] font-['Inter'] min-h-screen flex flex-col">
-      {/* --- MAIN CONTENT --- */}
-      {/* Notice: The <nav> block has been completely deleted so it matches the Home Page! */}
       <main className="flex-grow">
         {/* Hero Banner Section */}
         <div className="relative h-64 md:h-80 w-full overflow-hidden bg-[#D1F2EB]">
@@ -68,7 +63,6 @@ export default function ProfilePage() {
                   />
                 ) : (
                   <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white bg-surface-container-low flex items-center justify-center">
-                    {/* Fixed the "person" text bug by using Lucide Icon */}
                     <UserIcon size={64} className="text-outline-variant" />
                   </div>
                 )}
@@ -80,7 +74,6 @@ export default function ProfilePage() {
                   {user.firstName} {user.lastName}
                 </h1>
                 <p className="text-on-surface-variant font-medium mt-1 flex items-center">
-                  {/* Fixed the "calendar_today" text bug */}
                   <Calendar size={16} className="mr-2" />
                   Member since {memberSince}
                 </p>
@@ -95,7 +88,6 @@ export default function ProfilePage() {
                 Edit Profile
               </button>
               <button className="p-2.5 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                {/* Fixed the "share" text bug */}
                 <Share2 size={20} />
               </button>
             </div>
@@ -134,49 +126,14 @@ export default function ProfilePage() {
             </Link>
           </div>
 
-          {/* Dynamic Content Area (The Outlet window rendering About, Projects, etc.) */}
+          {/* Dynamic Content Area */}
           <div className="py-12">
             <Outlet />
           </div>
         </div>
       </main>
 
-      {/* --- FOOTER --- */}
-      {/* If your Home page also has a global footer, you can delete this <footer/> block too! */}
-      <footer className="bg-slate-50 border-t border-slate-200 mt-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-12 py-16 max-w-7xl mx-auto">
-          <div className="space-y-4">
-            <div className="text-lg font-bold text-emerald-800">FundEgypt</div>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
-              Institutional Stability. Modern Efficiency. Empowering Egyptian communities through strategic crowdfunding
-              and transparent support.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <a className="text-slate-500 hover:text-emerald-600 text-sm transition-opacity" href="#">
-              About Us
-            </a>
-            <a className="text-slate-500 hover:text-emerald-600 text-sm transition-opacity" href="#">
-              Terms of Service
-            </a>
-            <a className="text-slate-500 hover:text-emerald-600 text-sm transition-opacity" href="#">
-              Privacy Policy
-            </a>
-            <a className="text-slate-500 hover:text-emerald-600 text-sm transition-opacity" href="#">
-              Contact Support
-            </a>
-          </div>
-          <div className="md:text-right flex flex-col justify-between">
-            <div className="flex md:justify-end space-x-6 text-slate-400">
-              <span className="cursor-pointer hover:text-primary transition-colors font-bold">ENG</span>
-            </div>
-            <div className="text-sm text-on-surface-variant mt-8 md:mt-0">
-              © 2026 FundEgypt. Institutional Stability. Modern Efficiency.
-            </div>
-          </div>
-        </div>
-      </footer>
-
+      {/* Render Edit Modal */}
       {isEditModalOpen && <EditProfileModal onClose={() => setIsEditModalOpen(false)} />}
     </div>
   );
