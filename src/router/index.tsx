@@ -26,6 +26,7 @@ import HomePage from '../pages/home/HomePage';
 import SearchResultsPage from '../pages/home/SearchResultsPage';
 import CategoryBrowsePage from '../pages/home/CategoryBrowsePage';
 import NotFoundPage from '../pages/error/NotFoundPage';
+import CategoryDetailPage from '../pages/home/CategoryDetailPage';
 
 export const router = createBrowserRouter([
   {
@@ -36,13 +37,14 @@ export const router = createBrowserRouter([
       </PageWrapper>
     ),
     children: [
-      { path: ROUTES.HOME,           element: <HomePage /> },
-      { path: ROUTES.EXPLORE,        element: <ExplorePage /> },
+      { path: ROUTES.HOME, element: <HomePage /> },
+      { path: ROUTES.EXPLORE, element: <ExplorePage /> },
       { path: ROUTES.PROJECT_DETAIL, element: <ProjectDetailPage /> },
       { path: ROUTES.CREATE_PROJECT, element: <CreateProjectPage /> },
-      { path: ROUTES.EDIT_PROJECT,   element: <EditProjectPage /> },
-      { path: ROUTES.SEARCH,         element: <SearchResultsPage /> },
-      { path: ROUTES.CATEGORY,       element: <CategoryBrowsePage /> },
+      { path: ROUTES.EDIT_PROJECT, element: <EditProjectPage /> },
+      { path: ROUTES.SEARCH, element: <SearchResultsPage /> },
+      { path: ROUTES.CATEGORY, element: <CategoryBrowsePage /> },
+      { path: ROUTES.CATEGORY_DETAIL, element: <CategoryDetailPage /> },
 
       // Profile Feature
       {
@@ -51,21 +53,21 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <AboutTab /> },
           { path: ROUTES.MY_DONATIONS, element: <MyDonationsTab /> },
-          { path: ROUTES.MY_PROJECTS,  element: <MyProjectsTab /> },
-          
-          { path: ROUTES.EDIT_PROFILE,   element: <AboutTab /> },
+          { path: ROUTES.MY_PROJECTS, element: <MyProjectsTab /> },
+
+          { path: ROUTES.EDIT_PROFILE, element: <AboutTab /> },
           { path: ROUTES.DELETE_ACCOUNT, element: <AboutTab /> },
         ],
       },
 
-      { path: ROUTES.NOT_FOUND,      element: <NotFoundPage /> },
+      { path: ROUTES.NOT_FOUND, element: <NotFoundPage /> },
     ],
   },
-  
+
   // Auth pages — no navbar/footer
-  { path: ROUTES.LOGIN,           element: <LoginPage /> },
-  { path: ROUTES.REGISTER,        element: <RegisterPage /> },
-  { path: ROUTES.ACTIVATE,        element: <ActivationPage /> },
+  { path: ROUTES.LOGIN, element: <LoginPage /> },
+  { path: ROUTES.REGISTER, element: <RegisterPage /> },
+  { path: ROUTES.ACTIVATE, element: <ActivationPage /> },
   { path: ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
-  { path: ROUTES.RESET_PASSWORD,  element: <ResetPasswordPage /> },
+  { path: ROUTES.RESET_PASSWORD, element: <ResetPasswordPage /> },
 ]);

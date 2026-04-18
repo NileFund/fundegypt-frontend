@@ -109,7 +109,7 @@ export default function CommentItem({
 
   return (
     <div className={`${isReply ? 'ml-4 sm:ml-8' : ''}`}>
-      <div className="bg-surface-card rounded-lg p-4 space-y-3">
+      <div className={`${isReply ? 'bg-surface-page' : 'bg-surface-card'} rounded-lg p-4 space-y-3`}>
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
@@ -202,7 +202,8 @@ export default function CommentItem({
               <Button type="submit" disabled={isLoading}>
                 Save
               </Button>
-              <button
+              <Button
+                variant='secondary'
                 type="button"
                 onClick={() => {
                   setIsEditing(false)
@@ -211,7 +212,7 @@ export default function CommentItem({
                 }}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           </form>
         ) : (
@@ -219,7 +220,7 @@ export default function CommentItem({
         )}
 
         {/* Actions */}
-        {!isEditing && (
+        {!isEditing && !isReply && (
           <div className="flex items-center gap-4 pt-2">
             <button
               onClick={() => onReplyClick(comment.id)}
@@ -244,9 +245,9 @@ export default function CommentItem({
             >
               Delete
             </Button>
-            <button onClick={() => setShowDeleteConfirm(false)}>
+            <Button variant='secondary' onClick={() => setShowDeleteConfirm(false)}>
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -286,9 +287,9 @@ export default function CommentItem({
             >
               Submit Report
             </Button>
-            <button onClick={() => setShowReportDialog(false)}>
+            <Button variant='secondary' onClick={() => setShowReportDialog(false)}>
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       )}
