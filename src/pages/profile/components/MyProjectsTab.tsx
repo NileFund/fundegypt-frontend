@@ -201,11 +201,12 @@ export default function MyProjectsTab() {
                       </div>
                     </div>
                   </div>
-                </div>
-                );
+                </div >
+              </div>
+            );
           })
         }
-              </div >
+      </div >
     </div >
-      );
+  );
 }
