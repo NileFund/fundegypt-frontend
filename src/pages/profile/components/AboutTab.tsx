@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DeleteAccountModal from "./DeleteAccountModal";
 import { useAuth } from "../../../context/useAuth";
+import { ROUTES } from "../../../utils/constants";
 
 export default function AboutTab() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  // Bring in the globally authenticated user and loading state
+  const navigate = useNavigate();
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
@@ -23,7 +24,7 @@ export default function AboutTab() {
   return (
     <div className="animate-in fade-in duration-300">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-        {/* Asymmetric Content Grid (Left Side) */}
+        {/* Left Side: Personal Info & Bio */}
         <div className="md:col-span-2 space-y-8">
           {/* Personal Information Card */}
           <div className="bg-surface-container-lowest p-8 rounded-xl shadow-[0px_24px_48px_rgba(17,28,44,0.02)]">
@@ -63,63 +64,61 @@ export default function AboutTab() {
             </div>
           </div>
 
-          {/* Bio Card */}
+          {/* Bio Card - Now Dynamic! */}
           <div className="bg-surface-container-low p-8 rounded-xl">
             <h3 className="text-lg font-semibold mb-4 text-on-surface">Biography</h3>
             <p className="text-on-surface-variant leading-relaxed">
-              {/* Note: Bio isn't in your current Django User JSON, so keeping the placeholder for now. */}
-              Architecture enthusiast and community development advocate based in Cairo. Focused on sustainable urban
-              planning and supporting local initiatives that preserve historical landmarks while modernizing
-              infrastructure. Join me in building a better future for our communities.
+              {user.bio || "This user hasn't written a biography yet."}
             </p>
           </div>
         </div>
 
-        {/* Sidebar: Statistics/Badges (Right Side) */}
+        {/* Right Side: Sidebar Statistics & Action */}
         <div className="space-y-6">
+          {/* Impact Statistics Card - Now Dynamic! */}
           <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_24px_48px_rgba(17,28,44,0.02)]">
             <h3 className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mb-4">
               Impact Statistics
             </h3>
             <div className="space-y-6">
-              {/* Note: These stats are still placeholders until you have a specific backend endpoint for them */}
               <div className="flex justify-between items-center">
                 <span className="text-on-surface-variant font-medium">Projects Supported</span>
-                <span className="text-2xl font-bold text-primary">12</span>
+                <span className="text-2xl font-bold text-primary">{user.projectsSupported || 0}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-on-surface-variant font-medium">Total Contribution</span>
-                <span className="text-2xl font-bold text-primary">EGP 45k</span>
+                <span className="text-2xl font-bold text-primary">
+                  EGP {user.totalContribution?.toLocaleString() || 0}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-on-surface-variant font-medium">Impact Level</span>
                 <span className="px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold uppercase tracking-tight">
-                  Visionary
+                  {user.impactLevel || "Newcomer"}
                 </span>
               </div>
             </div>
           </div>
 
+          {/* Call to Action Card (This stays hardcoded as it's an app-wide action button) */}
           <div className="bg-primary p-6 rounded-xl text-on-primary">
-            <span
-              className="material-symbols-outlined text-4xl mb-4"
-              style={{
-                fontVariationSettings: "'FILL' 1",
-              }}>
+            <span className="material-symbols-outlined text-4xl mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>
               volunteer_activism
             </span>
             <h4 className="text-xl font-bold mb-2">Ready to start?</h4>
             <p className="text-on-primary-container/80 text-sm mb-6 leading-snug">
               Launch your own campaign today and make a real difference in Egypt.
             </p>
-            <button className="w-full py-3 bg-white text-primary font-bold rounded-lg hover:bg-secondary-container transition-colors">
+            <button
+              onClick={() => navigate(ROUTES.CREATE_PROJECT)}
+              className="w-full py-3 bg-white text-primary font-bold rounded-lg hover:bg-secondary-container transition-colors">
               Start Campaign
             </button>
           </div>
         </div>
       </div>
 
-      {/* Subtle Danger Zone - Wired up! */}
+      {/* Subtle Danger Zone */}
       <div className="mt-24 pt-12 border-t border-outline-variant/15 flex justify-center">
         <button
           className="text-error/60 text-sm font-medium hover:text-error transition-colors flex items-center"
@@ -129,7 +128,6 @@ export default function AboutTab() {
         </button>
       </div>
 
-      {/* Conditionally Render the Modal */}
       {isDeleteModalOpen && <DeleteAccountModal onClose={() => setIsDeleteModalOpen(false)} />}
     </div>
   );
