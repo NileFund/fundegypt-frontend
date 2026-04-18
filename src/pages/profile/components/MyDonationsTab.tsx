@@ -13,7 +13,7 @@ export default function MyDonationsTab() {
       try {
         setIsLoading(true);
         const data = await getMyDonations();
-        setDonations(data);
+        setDonations(data.results);
       } catch (err) {
         console.error("Failed to load donations from backend:", err);
         setError("Failed to load donation history. Please try again later.");
@@ -86,14 +86,14 @@ export default function MyDonationsTab() {
                   </span>
                   <span className="text-xs text-[#A0AEC0]">
                     {/* Updated from donation.date to donation.createdAt */}
-                    {new Date(donation.createdAt).toLocaleDateString("en-US", {
+                    {new Date(donation.created_at).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
                     })}
                   </span>
                 </div>
-                <h3 className="text-sm font-semibold text-[#1F6F5F] line-clamp-1 mt-1">{donation.project.title}</h3>
+                <h3 className="text-sm font-semibold text-[#1F6F5F] line-clamp-1 mt-1">{donation.project_title ?? `Project #${donation.project}`}</h3>
               </div>
 
               <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-2">
