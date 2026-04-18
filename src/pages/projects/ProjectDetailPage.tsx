@@ -8,7 +8,6 @@ import { useAuth } from '../../context/useAuth'
 import { formatEGP, formatDate, getPercent } from '../../utils/formatters'
 import ProgressBar from '../../components/ui/ProgressBar'
 import ProjectCard from '../../components/ui/ProjectCard'
-import RatingStars from '../../components/ui/RatingStars'
 import TagBadge from '../../components/ui/TagBadge'
 import Spinner from '../../components/ui/Spinner'
 import Alert from '../../components/ui/Alert'
@@ -21,6 +20,7 @@ import {
   createCommentReply,
 } from '../../services/commentService'
 import CommentSection from '../../components/comments/CommentSection'
+import RatingSection from '../../components/ratings/RatingSection'
 
 function daysLeft(endTime: string): number {
   return Math.max(0, Math.ceil((new Date(endTime).getTime() - Date.now()) / 86_400_000))
@@ -206,25 +206,11 @@ export default function ProjectDetailPage() {
             )}
           </div>
 
-          {project.averageRating > 0 && (
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8">
-              <h3 className="text-xl font-semibold text-text-primary mb-6">Community Rating</h3>
-              <div className="flex items-center gap-6 bg-gray-50 rounded-lg p-5">
-                <div className="text-center min-w-15">
-                  <span className="text-5xl font-bold text-brand-primary">{project.averageRating.toFixed(1)}</span>
-                  <div className="mt-1">
-                    <RatingStars value={project.averageRating} />
-                  </div>
-                </div>
-                <div className="border-l border-gray-200 pl-6">
-                  <p className="font-medium text-text-primary">Top Rated Campaign</p>
-                  <p className="text-sm text-text-muted mt-1">
-                    Based on verified contributor ratings.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+                 <RatingSection
+             projectId={Number(id)}
+             isOwner={isOwner}
+            isAuthenticated={!!user}
+             />
 
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-8">
             <CommentSection
