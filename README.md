@@ -1,73 +1,104 @@
-# React + TypeScript + Vite
+# NileFund Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive crowdfunding platform built with React and TypeScript. NileFund empowers Egyptian entrepreneurs and changemakers to raise funds for their innovative projects and causes.
 
-Currently, two official plugins are available:
+## 🌟 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### For Users
+- **Project Discovery**: Browse, search, and filter projects by category, rating, and funding status
+- **Project Details**: View comprehensive project information including descriptions, images, and funding progress
+- **Donations**: Support projects with secure payment integration
+- **User Profiles**: Create and manage personal profiles, track donations, and view project history
+- **Comments & Discussions**: Engage with project creators and other backers through comments and replies
+- **Search & Filtering**: Advanced search by title, tags, and category
+- **Category Browsing**: Explore projects organized by different categories
 
-## React Compiler
+### For Project Creators
+- **Project Creation**: Create and manage crowdfunding campaigns
+- **Project Editing**: Update project details, images, and descriptions
+- **Analytics**: Track fundraising progress and donor engagement
+- **Comment Management**: Respond to backer comments and questions
+- **Project Status**: Manage project lifecycle (running, pending, completed, cancelled)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Admin Features
+- **Featured Projects**: Highlight exceptional projects for increased visibility
+- **Category Management**: Organize projects by categories
+- **Content Moderation**: Manage comments and user-generated content
 
-## Expanding the ESLint configuration
+## 🛠️ Technology Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Frontend Framework
+- **React 18** - UI library with hooks
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Lightning-fast build tool
+- **TailwindCSS** - Utility-first CSS framework
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### State Management & Data Fetching
+- **TanStack React Query** - Server state management with automatic caching
+- **Zustand** (optional) - Client state management
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Routing & Navigation
+- **React Router v6** - Client-side routing with nested routes
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### UI Components & Icons
+- **Lucide React** - Modern SVG icon library
+- **Custom Components** - Built-in component library
+
+### Utilities
+- **Axios** - HTTP client for API requests
+- **date-fns** - Date formatting and manipulation
+
+## 📁 Project Structure
+
+```plaintext
+src/
+├── assets/            # Static assets like images and fonts
+├── components/        # Reusable React components
+├── features/          # Feature-based folders (e.g., auth, projects)
+├── hooks/             # Custom React hooks
+├── layouts/          # Layout components for consistent styling
+├── pages/            # Page components for routing
+├── services/         # API calls and business logic
+├── store/            # Global state management (e.g., Redux, Zustand)
+├── styles/           # Global styles and CSS frameworks
+├── utils/            # Utility functions and helpers
+└── App.tsx           # Root component
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+To get started with NileFund, follow these steps:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/NileFund/fundegypt-frontend
+   cd nilefund-frontend
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser** and navigate to `http://localhost:5173`
+
+## 🤝 Contributing
+
+We welcome contributions to NileFund! To contribute, please follow these guidelines:
+
+1. **Fork the repository**.
+2. **Create a new branch** for your feature or bugfix.
+3. **Make your changes** and commit them with descriptive messages.
+4. **Push your branch** to your forked repository.
+5. **Create a pull request** describing your changes.
+
+Please ensure that your code adheres to the existing style and conventions used in the project.
+
+---
+
+Made with ❤️ by the NileFund Team

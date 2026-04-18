@@ -47,7 +47,7 @@ const ForgotPasswordPage = () => {
 
   return (
     <div className="min-h-screen bg-surface-page relative overflow-hidden flex flex-col">
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-[-10%] right-[-10%] w-125 h-125 bg-brand-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
 
       <header className="w-full px-4 md:px-8 py-4 flex justify-between items-center z-10 border-b border-black/5 bg-white/50 backdrop-blur-md">
         <Link
@@ -64,7 +64,7 @@ const ForgotPasswordPage = () => {
         </Link>
       </header>
 
-      <div className="flex-grow flex items-center justify-center p-4">
+      <div className="grow flex items-center justify-center p-4">
         <div className="w-full max-w-md glass-shine rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative z-10 transition-all duration-500">
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-brand-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
