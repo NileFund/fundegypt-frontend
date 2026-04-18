@@ -62,9 +62,13 @@ export async function forgotPassword(email: string): Promise<void> {
 }
 
 // PATCH /accounts/me/  — update profile data
-export async function updateProfile(formData: FormData): Promise<User> {
-  const { data } = await api.patch<User>("/accounts/me/", formData);
-  return data;
+export async function updateProfile(data: FormData) {
+  const response = await api.put("/accounts/me/", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
 }
 
 // DELETE /accounts/me/ — delete account
