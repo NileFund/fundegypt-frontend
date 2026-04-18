@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { Heart, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { createDonation } from '../../services/donationService';
@@ -6,7 +7,7 @@ import { LIMITS } from '../../utils/constants';
 interface DonationModalProps {
   projectId: number;
   projectTitle: string;
-  projectStatus: string; 
+  projectStatus: string;
   onSuccess?: () => void;
 }
 
@@ -20,7 +21,7 @@ export default function DonationModal({
   projectStatus,
   onSuccess,
 }: DonationModalProps) {
-  console.log('projectStatus:', projectStatus); 
+  console.log('projectStatus:', projectStatus);
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState('');
   const [modalState, setModalState] = useState<ModalState>('idle');
@@ -29,7 +30,7 @@ export default function DonationModal({
   const isDisabled = projectStatus !== 'running';
 
   const open = () => {
-    if (isDisabled) return; 
+    if (isDisabled) return;
     setIsOpen(true);
     setAmount('');
     setModalState('idle');
@@ -80,8 +81,8 @@ export default function DonationModal({
       onSuccess?.();
     } catch (e: any) {
       console.log('Donation error response:', e?.response?.data);
-        const data = e?.response?.data;
-        const msg =
+      const data = e?.response?.data;
+      const msg =
         data?.detail ||
         data?.non_field_errors?.[0] ||
         (typeof data === 'string' ? data : null) ||
@@ -102,10 +103,9 @@ export default function DonationModal({
         onClick={open}
         disabled={isDisabled}
         className={`w-full flex items-center justify-center gap-2 font-semibold text-base px-8 py-3 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
-          ${
-            isDisabled
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-[#2FA084] hover:bg-[#1F6F5F] text-white focus:ring-[#2FA084]'
+          ${isDisabled
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-brand-primary hover:bg-[#1F6F5F] text-white focus:ring-brand-primary'
           }
         `}
       >
@@ -138,22 +138,22 @@ export default function DonationModal({
             {modalState === 'success' ? (
               /* Success State */
               <div className="text-center py-4">
-                <div className="flex items-center justify-center w-16 h-16 bg-[#D1F2EB] rounded-full mx-auto mb-4">
+                <div className="flex items-center justify-center w-16 h-16 bg-brand-mint rounded-full mx-auto mb-4">
                   <CheckCircle size={32} color="#2FA084" />
                 </div>
                 <h2 className="text-xl font-semibold text-[#1F6F5F] mb-2">
                   Thank You!
                 </h2>
-                <p className="text-[#4A5568] mb-6">
+                <p className="text-text-body mb-6">
                   Your donation of{' '}
-                  <span className="font-semibold text-[#2FA084]">
+                  <span className="font-semibold text-brand-primary">
                     {parseFloat(amount).toLocaleString('ar-EG')} EGP
                   </span>{' '}
                   to <span className="font-medium">"{projectTitle}"</span> was successful.
                 </p>
                 <button
                   onClick={close}
-                  className="bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-medium px-8 py-2.5 rounded-lg"
+                  className="bg-brand-primary hover:bg-[#1F6F5F] text-white font-medium px-8 py-2.5 rounded-lg"
                 >
                   Close
                 </button>
@@ -169,7 +169,7 @@ export default function DonationModal({
                       Support this Campaign
                     </h2>
                   </div>
-                  <p className="text-sm text-[#4A5568] pl-7">
+                  <p className="text-sm text-text-body pl-7">
                     You're donating to{' '}
                     <span className="font-medium text-[#1F6F5F]">
                       "{projectTitle}"
@@ -184,7 +184,7 @@ export default function DonationModal({
                       <button
                         key={val}
                         onClick={() => handleQuickAmount(val)}
-                        className="py-2 rounded-lg text-sm font-medium border border-[#D1F2EB] text-[#2FA084] hover:bg-[#D1F2EB]"
+                        className="py-2 rounded-lg text-sm font-medium border border-brand-mint text-brand-primary hover:bg-brand-mint"
                       >
                         {val} EGP
                       </button>
@@ -212,7 +212,7 @@ export default function DonationModal({
                 <button
                   onClick={handleSubmit}
                   disabled={modalState === 'loading' || isDisabled}
-                  className="w-full bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-semibold py-3 rounded-lg mt-5"
+                  className="w-full bg-brand-primary hover:bg-[#1F6F5F] text-white font-semibold py-3 rounded-lg mt-5"
                 >
                   {modalState === 'loading'
                     ? 'Processing...'

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { X, Lock } from "lucide-react";
 import { EGYPTIAN_PHONE_REGEX } from "../../../utils/constants";
@@ -78,20 +79,20 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
 
   return (
     // Overlay: Light dark backdrop blur
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
       {/* Modal Container: Clean white with soft shadow */}
-      <div className="bg-white rounded-[16px] w-full max-w-[600px] shadow-[0_8px_24px_rgba(0,0,0,0.15)] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+      <div className="bg-white rounded-[16px] w-full max-w-150 shadow-[0_8px_24px_rgba(0,0,0,0.15)] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-100 shrink-0">
           <div>
             <h3 className="text-xl font-semibold text-[#1F6F5F]">Profile Information</h3>
-            <p className="text-sm text-[#4A5568] mt-1">
+            <p className="text-sm text-text-body mt-1">
               Update your personal details and how you appear to the community.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-[#A0AEC0] hover:text-[#4A5568] transition-colors p-1 rounded-md hover:bg-gray-100 self-start"
+            className="text-text-muted hover:text-text-body transition-colors p-1 rounded-md hover:bg-gray-100 self-start"
             aria-label="Close dialog"
             disabled={isLoading}>
             <X size={20} />
@@ -104,7 +105,7 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
             {/* Name Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-[#4A5568]/70 uppercase tracking-widest mb-2">
+                <label className="block text-xs font-bold text-text-body/70 uppercase tracking-widest mb-2">
                   First Name
                 </label>
                 <input
@@ -112,16 +113,15 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
                   value={formData.firstName}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-[#4A5568] focus:outline-none focus:ring-2 transition-colors ${
-                    errors.firstName
-                      ? "border-[#E53E3E] focus:ring-[#E53E3E]/20"
-                      : "border-gray-200 focus:border-[#2FA084] focus:ring-[#2FA084]/20"
-                  }`}
+                  className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:ring-2 transition-colors ${errors.firstName
+                    ? "border-danger focus:ring-danger/20"
+                    : "border-gray-200 focus:border-brand-primary focus:ring-brand-primary/20"
+                    }`}
                 />
-                {errors.firstName && <p className="mt-1 text-xs text-[#E53E3E]">{errors.firstName}</p>}
+                {errors.firstName && <p className="mt-1 text-xs text-danger">{errors.firstName}</p>}
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#4A5568]/70 uppercase tracking-widest mb-2">
+                <label className="block text-xs font-bold text-text-body/70 uppercase tracking-widest mb-2">
                   Last Name
                 </label>
                 <input
@@ -129,36 +129,35 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
                   value={formData.lastName}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-[#4A5568] focus:outline-none focus:ring-2 transition-colors ${
-                    errors.lastName
-                      ? "border-[#E53E3E] focus:ring-[#E53E3E]/20"
-                      : "border-gray-200 focus:border-[#2FA084] focus:ring-[#2FA084]/20"
-                  }`}
+                  className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:ring-2 transition-colors ${errors.lastName
+                    ? "border-danger focus:ring-danger/20"
+                    : "border-gray-200 focus:border-brand-primary focus:ring-brand-primary/20"
+                    }`}
                 />
-                {errors.lastName && <p className="mt-1 text-xs text-[#E53E3E]">{errors.lastName}</p>}
+                {errors.lastName && <p className="mt-1 text-xs text-danger">{errors.lastName}</p>}
               </div>
             </div>
 
             {/* Email (Locked) */}
             <div>
-              <label className="block text-xs font-bold text-[#4A5568]/70 uppercase tracking-widest mb-2">
+              <label className="block text-xs font-bold text-text-body/70 uppercase tracking-widest mb-2">
                 Email Address
               </label>
               <div className="relative">
                 <input
                   value={formData.email}
                   disabled
-                  className="w-full bg-indigo-50/50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#A0AEC0] cursor-not-allowed"
+                  className="w-full bg-indigo-50/50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-text-muted cursor-not-allowed"
                 />
-                <Lock size={16} className="absolute right-4 top-3 text-[#A0AEC0]" />
+                <Lock size={16} className="absolute right-4 top-3 text-text-muted" />
               </div>
-              <p className="mt-1.5 text-[11px] text-[#A0AEC0]">Email cannot be changed for security reasons.</p>
+              <p className="mt-1.5 text-[11px] text-text-muted">Email cannot be changed for security reasons.</p>
             </div>
 
             {/* Phone & Birthdate Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-[#4A5568]/70 uppercase tracking-widest mb-2">
+                <label className="block text-xs font-bold text-text-body/70 uppercase tracking-widest mb-2">
                   Phone
                 </label>
                 <input
@@ -166,16 +165,15 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
                   value={formData.phone}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-[#4A5568] focus:outline-none focus:ring-2 transition-colors ${
-                    errors.phone
-                      ? "border-[#E53E3E] focus:ring-[#E53E3E]/20"
-                      : "border-gray-200 focus:border-[#2FA084] focus:ring-[#2FA084]/20"
-                  }`}
+                  className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:ring-2 transition-colors ${errors.phone
+                    ? "border-danger focus:ring-danger/20"
+                    : "border-gray-200 focus:border-brand-primary focus:ring-brand-primary/20"
+                    }`}
                 />
-                {errors.phone && <p className="mt-1 text-xs text-[#E53E3E]">{errors.phone}</p>}
+                {errors.phone && <p className="mt-1 text-xs text-danger">{errors.phone}</p>}
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#4A5568]/70 uppercase tracking-widest mb-2">
+                <label className="block text-xs font-bold text-text-body/70 uppercase tracking-widest mb-2">
                   Birthdate
                 </label>
                 <input
@@ -184,7 +182,7 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
                   value={formData.birthdate}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#4A5568] focus:outline-none focus:border-[#2FA084] focus:ring-2 focus:ring-[#2FA084]/20 transition-colors"
+                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-colors"
                 />
               </div>
             </div>
@@ -192,7 +190,7 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
             {/* Country & Facebook Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-[#4A5568]/70 uppercase tracking-widest mb-2">
+                <label className="block text-xs font-bold text-text-body/70 uppercase tracking-widest mb-2">
                   Country
                 </label>
                 <select
@@ -200,7 +198,7 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
                   value={formData.country}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#4A5568] focus:outline-none focus:border-[#2FA084] focus:ring-2 focus:ring-[#2FA084]/20 transition-colors">
+                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-colors">
                   <option value="Egypt">Egypt</option>
                   <option value="Saudi Arabia">Saudi Arabia</option>
                   <option value="UAE">UAE</option>
@@ -208,7 +206,7 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#4A5568]/70 uppercase tracking-widest mb-2">
+                <label className="block text-xs font-bold text-text-body/70 uppercase tracking-widest mb-2">
                   Facebook Link
                 </label>
                 <input
@@ -216,14 +214,14 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
                   value={formData.facebookProfile}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#4A5568] focus:outline-none focus:border-[#2FA084] focus:ring-2 focus:ring-[#2FA084]/20 transition-colors"
+                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-colors"
                 />
               </div>
             </div>
 
             {errors.submit && (
-              <div className="p-3 bg-[#FFF5F5] border border-[#E53E3E]/20 rounded-lg">
-                <p className="text-sm text-[#E53E3E] text-center">{errors.submit}</p>
+              <div className="p-3 bg-surface-error border border-danger/20 rounded-lg">
+                <p className="text-sm text-danger text-center">{errors.submit}</p>
               </div>
             )}
           </form>
@@ -235,14 +233,14 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-[#4A5568] hover:bg-gray-200 transition-colors disabled:opacity-50">
+            className="px-4 py-2 rounded-lg text-sm font-medium text-text-body hover:bg-gray-200 transition-colors disabled:opacity-50">
             Cancel
           </button>
           <button
             type="submit"
             form="edit-profile-form"
             disabled={isLoading}
-            className="bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-medium text-sm px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center min-w-[140px] disabled:opacity-70 disabled:cursor-not-allowed">
+            className="bg-brand-primary hover:bg-[#1F6F5F] text-white font-medium text-sm px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center min-w-35 disabled:opacity-70 disabled:cursor-not-allowed">
             {isLoading ? "Saving..." : "Save Changes"}
           </button>
         </div>

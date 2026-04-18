@@ -144,7 +144,7 @@ const RegisterPage = () => {
 
   return (
     <div className="min-h-screen bg-surface-page flex flex-col relative overflow-hidden">
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-[-10%] right-[-10%] w-125 h-125 bg-brand-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
 
       <header className="w-full px-6 md:px-12 py-6 flex justify-between items-center z-10">
         <Link
@@ -161,7 +161,7 @@ const RegisterPage = () => {
         </Link>
       </header>
 
-      <div className="flex-grow flex items-center justify-center p-4">
+      <div className="grow flex items-center justify-center p-4">
         <div className="w-full max-w-4xl glass-shine rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row overflow-hidden relative z-10 transition-all duration-500">
 
           <div className="md:w-[40%] bg-[#0a2d26] p-8 md:p-10 flex flex-col justify-between relative overflow-hidden shrink-0">
@@ -192,7 +192,7 @@ const RegisterPage = () => {
           </div>
 
           {/* Form Section */}
-          <div className="flex-grow p-6 md:p-8 bg-[#EEEEEE]">
+          <div className="grow p-6 md:p-8 bg-surface-page">
             <div className="mb-4">
               <h1 className="text-xl md:text-2xl font-bold text-brand-secondary tracking-tight">Create Account</h1>
               <p className="text-text-body/80 text-[10px] font-bold mt-0.5 tracking-wide">Enter your details to register as a fundraiser.</p>
@@ -221,7 +221,7 @@ const RegisterPage = () => {
                     <Camera className="text-text-muted group-hover:text-brand-primary transition-colors" size={28} />
                   )}
                 </div>
-                <div className="absolute bottom-0 right-1 w-6 h-6 rounded-full bg-brand-primary text-white flex items-center justify-center shadow-lg border-2 border-white ring-4 ring-[#EEEEEE]">
+                <div className="absolute bottom-0 right-1 w-6 h-6 rounded-full bg-brand-primary text-white flex items-center justify-center shadow-lg border-2 border-white ring-4 ring-surface-page">
                   <span className="text-lg font-bold leading-none">+</span>
                 </div>
               </div>

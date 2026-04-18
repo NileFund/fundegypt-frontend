@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { User as UserIcon, Calendar, Share2 } from "lucide-react";
 import { ROUTES } from "../../utils/constants";
@@ -37,9 +37,9 @@ export default function ProfilePage() {
 
   return (
     <div className="text-on-surface bg-[#f9f9ff] font-['Inter'] min-h-screen flex flex-col">
-      <main className="flex-grow">
+      <main className="grow">
         {/* Hero Banner Section */}
-        <div className="relative h-64 md:h-80 w-full overflow-hidden bg-[#D1F2EB]">
+        <div className="relative h-64 md:h-80 w-full overflow-hidden bg-brand-mint">
           <div className="absolute inset-0 opacity-40 mix-blend-overlay">
             <img
               className="w-full h-full object-cover"
@@ -97,31 +97,28 @@ export default function ProfilePage() {
           <div className="mt-12 flex space-x-12 border-b border-outline-variant/15">
             <Link
               to={`${ROUTES.PROFILE}/projects`}
-              className={`pb-4 text-sm font-semibold tracking-wide transition-all border-b-2 ${
-                location.pathname.includes("projects")
-                  ? "text-primary border-primary"
-                  : "text-on-surface-variant border-transparent hover:text-primary"
-              }`}>
+              className={`pb-4 text-sm font-semibold tracking-wide transition-all border-b-2 ${location.pathname.includes("projects")
+                ? "text-primary border-primary"
+                : "text-on-surface-variant border-transparent hover:text-primary"
+                }`}>
               My Projects
             </Link>
 
             <Link
               to={ROUTES.MY_DONATIONS}
-              className={`pb-4 text-sm font-semibold tracking-wide transition-all border-b-2 ${
-                location.pathname === ROUTES.MY_DONATIONS
-                  ? "text-primary border-primary"
-                  : "text-on-surface-variant border-transparent hover:text-primary"
-              }`}>
+              className={`pb-4 text-sm font-semibold tracking-wide transition-all border-b-2 ${location.pathname === ROUTES.MY_DONATIONS
+                ? "text-primary border-primary"
+                : "text-on-surface-variant border-transparent hover:text-primary"
+                }`}>
               My Donations
             </Link>
 
             <Link
               to={ROUTES.PROFILE}
-              className={`pb-4 text-sm font-semibold tracking-wide transition-all border-b-2 ${
-                location.pathname === ROUTES.PROFILE || location.pathname === `${ROUTES.PROFILE}/`
-                  ? "text-primary border-primary"
-                  : "text-on-surface-variant border-transparent hover:text-primary"
-              }`}>
+              className={`pb-4 text-sm font-semibold tracking-wide transition-all border-b-2 ${location.pathname === ROUTES.PROFILE || location.pathname === `${ROUTES.PROFILE}/`
+                ? "text-primary border-primary"
+                : "text-on-surface-variant border-transparent hover:text-primary"
+                }`}>
               About
             </Link>
           </div>

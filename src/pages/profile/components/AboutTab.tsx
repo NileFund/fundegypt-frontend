@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trash2, HeartHandshake } from "lucide-react"; // Added HeartHandshake
 import DeleteAccountModal from "./DeleteAccountModal";
@@ -43,7 +43,7 @@ export default function AboutTab() {
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Social Profile</p>
                 {user.facebookProfile ? (
                   <a
-                    className="text-lg font-medium text-[#2FA084] hover:text-[#1F6F5F] hover:underline flex items-center transition-colors"
+                    className="text-lg font-medium text-brand-primary hover:text-[#1F6F5F] hover:underline flex items-center transition-colors"
                     href={user.facebookProfile}
                     target="_blank"
                     rel="noopener noreferrer">

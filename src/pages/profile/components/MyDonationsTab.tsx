@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { getMyDonations } from "../../../services/donationService";
 import { useNavigate } from "react-router-dom";
@@ -46,14 +47,14 @@ export default function MyDonationsTab() {
         {[1, 2, 3, 4].map((n) => (
           <div
             key={n}
-            className="bg-white rounded-xl border border-[#D1F2EB] animate-pulse p-5 flex items-center gap-4"
+            className="bg-white rounded-xl border border-brand-mint animate-pulse p-5 flex items-center gap-4"
           >
-            <div className="w-10 h-10 bg-[#EEEEEE] rounded-full shrink-0" />
+            <div className="w-10 h-10 bg-surface-page rounded-full shrink-0" />
             <div className="flex-1 space-y-2">
-              <div className="bg-[#EEEEEE] h-4 rounded w-1/2" />
-              <div className="bg-[#EEEEEE] h-3 rounded w-1/4" />
+              <div className="bg-surface-page h-4 rounded w-1/2" />
+              <div className="bg-surface-page h-3 rounded w-1/4" />
             </div>
-            <div className="bg-[#D1F2EB] h-5 rounded w-20" />
+            <div className="bg-surface-page h-5 rounded w-20" />
           </div>
         ))}
       </div>
@@ -63,8 +64,8 @@ export default function MyDonationsTab() {
   // ERROR
   if (error) {
     return (
-      <div className="bg-[#FFF5F5] border-l-4 border-[#E53E3E] p-4 rounded-md">
-        <p className="text-[#E53E3E]">{error}</p>
+      <div className="bg-surface-error border-l-4 border-error p-4 rounded-md">
+        <p className="text-error">{error}</p>
       </div>
     );
   }
@@ -72,15 +73,15 @@ export default function MyDonationsTab() {
   // EMPTY
   if (donations.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 bg-white border border-[#D1F2EB] rounded-xl">
-        <Heart size={48} className="text-[#D1F2EB] mb-4" />
-        <h3 className="text-xl font-semibold text-[#1F6F5F] mb-2">
+      <div className="flex flex-col items-center justify-center py-16 bg-white border border-brand-mint rounded-xl">
+        <Heart size={48} className="text-brand-mint mb-4" />
+        <h3 className="text-xl font-semibold text-brand-mint mb-2">
           No Donations Yet
         </h3>
-        <p className="text-[#4A5568] mb-6">
+        <p className="text-text-muted mb-6">
           You haven't donated to any project yet.
         </p>
-        <button className="border border-[#2FA084] text-[#2FA084] hover:bg-[#D1F2EB] font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200">
+        <button className="border border-brand-mint text-brand-mint hover:bg-surface-page font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200">
           Explore Projects
         </button>
       </div>
@@ -94,7 +95,7 @@ export default function MyDonationsTab() {
         <h2 className="text-2xl font-semibold text-[#1F6F5F]">
           Donation History
         </h2>
-        <span className="text-sm text-[#A0AEC0]">
+        <span className="text-sm text-text-muted">
           {donations.length} donation
           {donations.length !== 1 ? "s" : ""}
         </span>
@@ -113,13 +114,13 @@ export default function MyDonationsTab() {
                 )
               )
             }
-            className="bg-white rounded-xl border border-[#D1F2EB] p-4 flex items-center gap-4 cursor-pointer hover:border-[#2FA084] hover:shadow-md transition-all duration-200 group"
+            className="bg-white rounded-xl border border-brand-mint p-4 flex items-center gap-4 cursor-pointer hover:border-brand-primarybg-brand-primary] hover:shadow-md transition-all duration-200 group"
           >
             {/* Icon */}
-            <div className="w-11 h-11 bg-[#D1F2EB] rounded-full flex items-center justify-center shrink-0 group-hover:bg-[#2FA084] transition-colors duration-200">
+            <div className="w-11 h-11 bg-brand-mint rounded-full flex items-center justify-center shrink-0 group-hover:bg-brand-primary] transition-colors duration-200">
               <Heart
                 size={18}
-                className="text-[#2FA084] group-hover:text-white transition-colors duration-200"
+                className="text-brand-primary bg-brand-primary] group-hover:text-white transition-colors duration-200"
                 fill="currentColor"
               />
             </div>
@@ -129,17 +130,17 @@ export default function MyDonationsTab() {
               <p className="text-sm font-semibold text-[#1F6F5F] truncate">
                 {(donation as any).projectTitle}
               </p>
-              <p className="text-xs text-[#A0AEC0] mt-0.5">
+              <p className="text-xs text-text-muted mt-0.5">
                 {formatDate((donation as any).createdAt)}
               </p>
             </div>
 
             {/* Amount */}
             <div className="text-right shrink-0">
-              <p className="text-base font-bold text-[#2FA084]">
+              <p className="text-base font-bold text-brand-primarybg-brand-primary]">
                 {formatAmount(donation.amount)} EGP
               </p>
-              <span className="text-[10px] bg-[#D1F2EB] text-[#1F6F5F] px-2 py-0.5 rounded-full font-medium">
+              <span className="text-[10px] bg-brand-mint text-[#1F6F5F] px-2 py-0.5 rounded-full font-medium">
                 Donated
               </span>
             </div>

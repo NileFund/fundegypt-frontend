@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
 import { X, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/useAuth";
@@ -64,8 +65,8 @@ export default function DeleteAccountModal({ onClose }: DeleteAccountModalProps)
     }
   };
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-[16px] w-full max-w-[480px] shadow-[0_8px_24px_rgba(0,0,0,0.15)] overflow-hidden animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white rounded-[16px] w-full max-w-120 shadow-[0_8px_24px_rgba(0,0,0,0.15)] overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="flex justify-between items-center p-6 border-b border-gray-100">
           <h3 className="text-lg font-semibold text-red-600 flex items-center">
             <AlertTriangle size={20} className="text-red-500 mr-2" />
@@ -104,11 +105,10 @@ export default function DeleteAccountModal({ onClose }: DeleteAccountModalProps)
                 }}
                 placeholder="Enter your password"
                 disabled={isLoading}
-                className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 ${
-                  error
-                    ? "border-red-500 focus:border-red-600 focus:ring-red-500/20"
-                    : "border-gray-300 focus:border-[#2FA084] focus:ring-[#2FA084]/20"
-                }`}
+                className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 ${error
+                  ? "border-red-500 focus:border-red-600 focus:ring-red-500/20"
+                  : "border-gray-300 focus:border-brand-primary focus:ring-brand-primary/20"
+                  }`}
               />
               {/* This is where the error message renders */}
               {error && (
@@ -128,7 +128,7 @@ export default function DeleteAccountModal({ onClose }: DeleteAccountModalProps)
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-red-600 hover:bg-red-700 text-white font-medium text-sm px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center min-w-[140px] disabled:opacity-70 disabled:cursor-not-allowed">
+              className="bg-red-600 hover:bg-red-700 text-white font-medium text-sm px-6 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center min-w-35 disabled:opacity-70 disabled:cursor-not-allowed">
               {isLoading ? "Deleting..." : "Delete Account"}
             </button>
           </div>

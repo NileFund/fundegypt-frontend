@@ -14,7 +14,7 @@ const Footer = () => {
           <div className="space-y-6">
             <Link
               to={ROUTES.HOME}
-              className="text-2xl font-bold tracking-tight bg-gradient-to-r from-brand-mint to-brand-success bg-clip-text text-transparent"
+              className="text-2xl font-bold tracking-tight bg-linear-to-r from-brand-mint to-brand-success bg-clip-text text-transparent"
             >
               {APP_NAME}
             </Link>

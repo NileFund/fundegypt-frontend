@@ -47,8 +47,8 @@ const ActivationPage = () => {
 
   return (
     <div className="min-h-screen bg-surface-page relative overflow-hidden flex flex-col">
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-secondary/5 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-[-10%] right-[-10%] w-125 h-125 bg-brand-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] left-[-10%] w-125 h-125 bg-brand-secondary/5 rounded-full blur-[120px] pointer-events-none"></div>
 
       <header className="w-full px-8 py-6 flex justify-center items-center z-10">
         <Link
@@ -59,12 +59,12 @@ const ActivationPage = () => {
         </Link>
       </header>
 
-      <div className="flex-grow flex items-center justify-center p-4">
+      <div className="grow flex items-center justify-center p-4">
         <div className="w-full max-w-md glass-shine rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative z-10 text-center transition-all duration-500">
 
           <div className="flex justify-center mb-8">
             <div className={`w-24 h-24 rounded-3xl flex items-center justify-center transition-all duration-700 ${status === 'loading' ? 'bg-white/5 animate-pulse' :
-              status === 'success' ? 'bg-brand-success/20 border border-brand-success/30 rotate-[360deg]' :
+              status === 'success' ? 'bg-brand-success/20 border border-brand-success/30 rotate-360' :
                 'bg-danger/20 border border-danger/30'
               }`}>
               {status === 'loading' && <Loader2 className="text-brand-primary animate-spin" size={48} />}

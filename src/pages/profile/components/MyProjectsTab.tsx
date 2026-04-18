@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { PlusCircle, Star, Image as ImageIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom"; // Added for routing
 import { getMyProjects } from "../../../services/projectService"; // Adjust path
@@ -52,13 +52,13 @@ export default function MyProjectsTab() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
         {[1, 2, 3].map((n) => (
-          <div key={n} className="bg-white rounded-xl overflow-hidden border border-[#D1F2EB] animate-pulse">
-            <div className="bg-[#EEEEEE] h-48 w-full" />
+          <div key={n} className="bg-white rounded-xl overflow-hidden border border-brand-mint animate-pulse">
+            <div className="bg-surface-page h-48 w-full" />
             <div className="p-4 space-y-3">
-              <div className="bg-[#EEEEEE] h-4 rounded w-1/4" />
-              <div className="bg-[#EEEEEE] h-5 rounded w-3/4" />
-              <div className="bg-[#EEEEEE] h-3 rounded w-full" />
-              <div className="bg-[#D1F2EB] h-2 rounded-full w-full mt-4" />
+              <div className="bg-surface-page h-4 rounded w-1/4" />
+              <div className="bg-surface-page h-5 rounded w-3/4" />
+              <div className="bg-surface-page h-3 rounded w-full" />
+              <div className="bg-brand-mint h-2 rounded-full w-full mt-4" />
             </div>
           </div>
         ))}
@@ -69,8 +69,8 @@ export default function MyProjectsTab() {
   // --- STATE 2: ERROR ---
   if (error) {
     return (
-      <div className="bg-[#FFF5F5] border-l-4 border-[#E53E3E] p-4 rounded-md">
-        <p className="text-[#E53E3E]">{error}</p>
+      <div className="bg-surface-error border-l-4 border-danger p-4 rounded-md">
+        <p className="text-danger">{error}</p>
       </div>
     );
   }
@@ -78,15 +78,15 @@ export default function MyProjectsTab() {
   // --- STATE 3: EMPTY STATE ---
   if (projects.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 bg-white border border-[#D1F2EB] rounded-xl animate-in fade-in">
-        <div className="w-16 h-16 bg-[#D1F2EB] rounded-full flex items-center justify-center mb-4">
-          <PlusCircle size={32} className="text-[#2FA084]" />
+      <div className="flex flex-col items-center justify-center py-16 bg-white border border-brand-mint rounded-xl animate-in fade-in">
+        <div className="w-16 h-16 bg-brand-mint rounded-full flex items-center justify-center mb-4">
+          <PlusCircle size={32} className="text-brand-primary" />
         </div>
         <h3 className="text-xl font-semibold text-[#1F6F5F] mb-2">No Projects Yet</h3>
-        <p className="text-[#4A5568] mb-6">You haven't created any projects yet. Start your first campaign!</p>
+        <p className="text-text-body mb-6">You haven't created any projects yet. Start your first campaign!</p>
         <button
           onClick={() => navigate(ROUTES.CREATE_PROJECT)}
-          className="bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200">
+          className="bg-brand-primary hover:bg-[#1F6F5F] text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200">
           Create Project
         </button>
       </div>
@@ -100,7 +100,7 @@ export default function MyProjectsTab() {
         <h2 className="text-2xl font-semibold text-on-surface">My Campaigns</h2>
         <button
           onClick={() => navigate(ROUTES.CREATE_PROJECT)}
-          className="bg-[#2FA084] hover:bg-[#1F6F5F] text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200 flex items-center">
+          className="bg-brand-primary hover:bg-[#1F6F5F] text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200 flex items-center">
           <PlusCircle size={16} className="mr-2" />
           New Campaign
         </button>
@@ -122,11 +122,11 @@ export default function MyProjectsTab() {
             return (
               <div
                 key={project.id}
-                className="bg-white rounded-xl border border-[#D1F2EB] shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-200 overflow-hidden flex flex-col group cursor-pointer"
+                className="bg-white rounded-xl border border-brand-mint shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-200 overflow-hidden flex flex-col group cursor-pointer"
                 onClick={() => navigate(`${ROUTES.PROJECT_DETAIL.replace(":id", project.id.toString())}`)} // Assuming you want clicking to go to detail page
               >
                 {/* Image & Badge */}
-                <div className="relative h-48 w-full bg-[#EEEEEE] overflow-hidden flex items-center justify-center">
+                <div className="relative h-48 w-full bg-surface-page overflow-hidden flex items-center justify-center">
                   {displayImage ? (
                     <img
                       src={displayImage}
@@ -142,7 +142,7 @@ export default function MyProjectsTab() {
                       <span className="text-sm font-bold text-[#1F6F5F]">
                         {Number(project.totalDonated).toLocaleString("en-US")} EGP
                       </span>
-                      <span className="text-xs text-[#4A5568] block mt-0.5">
+                      <span className="text-xs text-text-body block mt-0.5">
                         raised of {Number(project.totalTarget).toLocaleString("en-US")} EGP
                       </span>
                     </div>
@@ -152,16 +152,16 @@ export default function MyProjectsTab() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-5 flex flex-col flex-grow">
+                  <div className="p-5 flex flex-col grow">
                     <h3 className="text-lg font-semibold text-[#1F6F5F] line-clamp-2 leading-tight mb-2">
                       {project.title}
                     </h3>
                     {/* Mapped 'description' to 'details' per types.ts */}
-                    <p className="text-sm text-[#4A5568] line-clamp-2 mb-4 flex-grow">{project.details}</p>
+                    <p className="text-sm text-text-body line-clamp-2 mb-4 grow">{project.details}</p>
 
                     {/* Progress Bar */}
                     <div className="mt-auto">
-                      <div className="bg-[#D1F2EB] rounded-full h-2 overflow-hidden mb-2">
+                      <div className="bg-brand-mint rounded-full h-2 overflow-hidden mb-2">
                         <div
                           className="h-full rounded-full transition-all duration-1000 ease-out"
                           style={{ width: `${percent}%`, backgroundColor: barColor }}
@@ -173,7 +173,7 @@ export default function MyProjectsTab() {
                           <span className="text-sm font-bold text-[#1F6F5F]">
                             {Number(project.totalDonated).toLocaleString("ar-EG")} EGP
                           </span>
-                          <span className="text-xs text-[#4A5568] block mt-0.5">
+                          <span className="text-xs text-text-body block mt-0.5">
                             raised of {Number(project.totalTarget).toLocaleString("ar-EG")}
                           </span>
                         </div>
@@ -184,18 +184,18 @@ export default function MyProjectsTab() {
 
                       {/* Footer Metrics */}
                       <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                        <div className="flex items-center text-sm text-[#4A5568]">
+                        <div className="flex items-center text-sm text-text-body">
                           <Star
                             size={16}
                             className={
-                              project.averageRating > 0 ? "text-[#F6AD55] mr-1 fill-[#F6AD55]" : "text-[#D1F2EB] mr-1"
+                              project.averageRating > 0 ? "text-[#F6AD55] mr-1 fill-[#F6AD55]" : "text-brand-mint mr-1"
                             }
                           />
                           <span className="font-medium mt-0.5">
                             {project.averageRating > 0 ? project.averageRating.toFixed(1) : "New"}
                           </span>
                         </div>
-                        <span className="bg-[#FFF8E1] text-[#F57F17] text-xs font-semibold px-2.5 py-1 rounded-full">
+                        <span className="bg-[#FFF8E1] text-warning text-xs font-semibold px-2.5 py-1 rounded-full">
                           {daysLeft} days left
                         </span>
                       </div>

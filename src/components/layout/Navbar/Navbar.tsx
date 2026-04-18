@@ -16,7 +16,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <Link
             to={ROUTES.HOME}
-            className="text-2xl font-bold tracking-tight bg-gradient-to-r from-brand-mint to-brand-success bg-clip-text text-transparent hover:scale-105 transition-transform duration-300"
+            className="text-2xl font-bold tracking-tight bg-linear-to-r from-brand-mint to-brand-success bg-clip-text text-transparent hover:scale-105 transition-transform duration-300"
           >
             {APP_NAME}
           </Link>

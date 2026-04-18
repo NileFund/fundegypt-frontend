@@ -8,7 +8,11 @@ export interface User {
   country: string | null
   birthdate: string | null
   facebookProfile: string | null
-  createdAt: string
+  createdAt: string,
+  bio: string | null,
+  projectsSupported: number | null,
+  totalContribution: number | null,
+  impactLevel: string | null
 }
 
 export interface Category {
@@ -48,7 +52,8 @@ export interface Project {
   createdAt: string
 }
 
-export interface Comment {  id: number
+export interface Comment {
+  id: number
   user: Pick<User, 'id' | 'firstName' | 'lastName' | 'profilePic'>
   text: string
   createdAt: string
@@ -77,14 +82,14 @@ export interface DonationSummary {
   remaining: number;
   percentage: number;
 }
- 
+
 export interface TopDonor {
   email: string;
   full_name: string;
   profile_picture: string | null;
   total: number;
 }
- 
+
 export interface PaginatedResponse<T> {
   count: number;
   next: string | null;
