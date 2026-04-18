@@ -6,7 +6,6 @@ import { getCategories } from '../../services/categoryService'
 import ProjectCard from '../../components/ui/ProjectCard'
 import Spinner from '../../components/ui/Spinner'
 import { type Project } from '../../types'
-import Button from '../../components/ui/Button'
 
 export default function CategoryDetailPage() {
   const { id } = useParams()
@@ -113,10 +112,10 @@ export default function CategoryDetailPage() {
             <span className="text-text-muted text-sm font-medium">Sort by:</span>
             <div className="flex gap-2">
               {(['newest', 'rating', 'popular'] as const).map(sort => (
-                <Button
+                <button
                   key={sort}
                   onClick={() => setSortBy(sort)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${sortBy === sort
+                  className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${sortBy === sort
                     ? 'bg-brand-primary text-white shadow-md'
                     : 'bg-surface-card text-text-body hover:bg-surface-card/80'
                     }`}
@@ -124,7 +123,7 @@ export default function CategoryDetailPage() {
                   {sort === 'newest' && 'Newest First'}
                   {sort === 'rating' && 'Highest Rated'}
                   {sort === 'popular' && 'Most Funded'}
-                </Button>
+                </button>
               ))}
             </div>
           </div>

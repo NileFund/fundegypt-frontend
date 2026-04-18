@@ -161,14 +161,14 @@ export default function CommentItem({
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="p-2 hover:bg-surface-page rounded-lg transition-colors text-text-muted hover:text-brand-primary"
+                className="cursor-pointer p-2 hover:bg-surface-page rounded-lg transition-colors text-text-muted hover:text-brand-primary"
                 title="Edit comment"
               >
                 <Edit2 className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="p-2 hover:bg-surface-page rounded-lg transition-colors text-text-muted hover:text-red-500"
+                className="cursor-pointer p-2 hover:bg-surface-page rounded-lg transition-colors text-text-muted hover:text-red-500"
                 title="Delete comment"
               >
                 <Trash2 className="w-4 h-4" />
@@ -224,7 +224,7 @@ export default function CommentItem({
           <div className="flex items-center gap-4 pt-2">
             <button
               onClick={() => onReplyClick(comment.id)}
-              className="flex items-center gap-2 text-xs font-medium text-text-muted hover:text-brand-primary transition-colors group"
+              className="cursor-pointer flex items-center gap-2 text-xs font-medium text-text-muted hover:text-brand-primary transition-colors group"
             >
               <MessageCircle className="w-4 h-4 group-hover:fill-current" />
               Reply

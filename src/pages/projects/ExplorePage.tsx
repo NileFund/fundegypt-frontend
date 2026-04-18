@@ -5,7 +5,6 @@ import { getCategories } from '../../services/categoryService'
 import ProjectCard from '../../components/ui/ProjectCard'
 import Spinner from '../../components/ui/Spinner'
 import SearchBar from '../../components/ui/SearchBar'
-import Button from '../../components/ui/Button'
 
 export default function ExplorePage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -90,17 +89,17 @@ export default function ExplorePage() {
           </div>
 
           <div className="flex justify-center gap-3 mt-10">
-            <Button
+            <button
               disabled={!data?.previous}
               onClick={() => setFilter('page', String(page - 1))}
-              className="px-4 py-2 rounded-lg border text-sm disabled:opacity-40 hover:bg-gray-50"
-            >Previous</Button>
-            <span className="px-4 py-2 text-sm text-text-muted">Page {page}</span>
-            <Button
+              className="disabled:cursor-not-allowed cursor-pointer px-4 py-2 rounded-lg border text-sm disabled:opacity-40 hover:bg-gray-50"
+            >Previous</button>
+            <span className="px-4 py-2 text-sm text-text-body">Page {page}</span>
+            <button
               disabled={!data?.next}
               onClick={() => setFilter('page', String(page + 1))}
-              className="px-4 py-2 rounded-lg border text-sm disabled:opacity-40 hover:bg-gray-50"
-            >Next</Button>
+              className="disabled:cursor-not-allowed cursor-pointer px-4 py-2 rounded-lg border text-sm disabled:opacity-40 hover:bg-gray-50"
+            >Next</button>
           </div>
         </>
       )}

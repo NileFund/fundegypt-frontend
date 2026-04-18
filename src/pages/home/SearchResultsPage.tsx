@@ -6,7 +6,6 @@ import ProjectCard from '../../components/ui/ProjectCard'
 import SearchBar from '../../components/ui/SearchBar'
 import Spinner from '../../components/ui/Spinner'
 import { type Project } from '../../types'
-import Button from '../../components/ui/Button'
 
 export default function SearchResultsPage() {
   const [searchParams] = useSearchParams()
@@ -97,10 +96,10 @@ export default function SearchResultsPage() {
             <span className="text-text-muted text-sm font-medium">Sort by:</span>
             <div className="flex gap-2">
               {(['relevant', 'newest', 'rating', 'popular'] as const).map(sort => (
-                <Button
+                <button
                   key={sort}
                   onClick={() => setSortBy(sort)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${sortBy === sort
+                  className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors ${sortBy === sort
                     ? 'bg-brand-primary text-white'
                     : 'bg-surface-card text-text-body hover:bg-surface-card/80'
                     }`}
@@ -109,7 +108,7 @@ export default function SearchResultsPage() {
                   {sort === 'newest' && 'Newest'}
                   {sort === 'rating' && 'Highest Rated'}
                   {sort === 'popular' && 'Most Popular'}
-                </Button>
+                </button>
               ))}
             </div>
           </div>
