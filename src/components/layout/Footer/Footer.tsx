@@ -71,7 +71,7 @@ const Footer = () => {
 
         </div>
 
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+        <div className="pt-8 border-t border-white/10 flex justify-center items-center text-sm text-gray-400">
           <p>© {currentYear} {APP_NAME}. All rights reserved.</p>
         </div>
       </div>

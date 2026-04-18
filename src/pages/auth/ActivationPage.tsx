@@ -10,6 +10,7 @@ import {
 import axios from 'axios';
 import api from '../../services/api';
 import { ROUTES, APP_NAME } from '../../utils/constants';
+import Logo from '../../assets/favicon.png';
 
 const ActivationPage = () => {
   const { uid, token } = useParams<{ uid: string; token: string }>();
@@ -55,6 +56,7 @@ const ActivationPage = () => {
           to={ROUTES.HOME}
           className="text-2xl font-black tracking-tighter text-brand-secondary hover:scale-105 transition-transform duration-300"
         >
+          <img src={Logo} alt={APP_NAME} className="w-8 h-8 inline-block mr-2 -mt-1" />
           {APP_NAME}
         </Link>
       </header>

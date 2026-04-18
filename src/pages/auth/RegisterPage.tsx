@@ -11,6 +11,7 @@ import { ROUTES, APP_NAME } from '../../utils/constants';
 import axios from 'axios';
 import api from '../../services/api';
 import { validateEmail, validatePassword, validateEgyptPhone } from '../../utils/validators';
+import Logo from '../../assets/favicon.png';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -151,6 +152,7 @@ const RegisterPage = () => {
           to={ROUTES.HOME}
           className="text-2xl font-black tracking-tighter text-brand-secondary hover:scale-105 transition-transform duration-300"
         >
+          <img src={Logo} alt={APP_NAME} className="w-8 h-8 inline-block mr-2 -mt-1" />
           {APP_NAME}
         </Link>
         <Link

@@ -5,6 +5,7 @@ import axios from 'axios';
 import api from '../../services/api';
 import { ROUTES, APP_NAME } from '../../utils/constants';
 import { validatePassword } from '../../utils/validators';
+import Logo from '../../assets/favicon.png';
 
 const ResetPasswordPage = () => {
   const { token: pathToken } = useParams<{ token: string }>();
@@ -79,6 +80,7 @@ const ResetPasswordPage = () => {
           to={ROUTES.HOME}
           className="text-2xl font-black tracking-tighter text-brand-secondary hover:scale-105 transition-transform duration-300"
         >
+          <img src={Logo} alt={APP_NAME} className="w-8 h-8 inline-block mr-2 -mt-1" />
           {APP_NAME}
         </Link>
       </header>
