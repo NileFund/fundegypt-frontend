@@ -82,6 +82,6 @@ export async function getDonationSummary(id: number): Promise<DonationSummary> {
 
 // GET /projects/my-campaigns/  — current user's projects
 export async function getMyProjects(): Promise<PaginatedResponse<Project>> {
-  const { data } = await api.get<PaginatedResponse<Project>>("/projects/my-campaigns/");
+  const { data } = await api.get<PaginatedResponse<Project>>("/projects/my_campaigns/");
   return data;
 }

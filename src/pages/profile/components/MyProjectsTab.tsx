@@ -164,10 +164,10 @@ export default function MyProjectsTab() {
                   <div className="flex justify-between items-end mb-4">
                     <div>
                       <span className="text-sm font-bold text-[#1F6F5F]">
-                        {Number(project.totalDonated).toLocaleString("ar-EG")} EGP
+                        {Number(project.totalDonated).toLocaleString("en-US")} EGP
                       </span>
                       <span className="text-xs text-[#4A5568] block mt-0.5">
-                        raised of {Number(project.totalTarget).toLocaleString("ar-EG")}
+                        raised of {Number(project.totalTarget).toLocaleString("en-US")} EGP
                       </span>
                     </div>
                     <span className="text-sm font-bold" style={{ color: barColor }}>

@@ -55,17 +55,21 @@ export interface Comment {  id: number
   replies: Comment[]
   parentId: number | null
 }
+
+export interface DonationDonor {
+  email: string;
+  full_name: string;
+  profile_picture: string | null;
+}
+
 export interface Donation {
   id: number;
-  amount: number;
+  amount: string | number;
   project: number;
-  project_title?: string;
-  project_image?: string;
-  donor: number;
-  donor_name?: string;
+  projectTitle: string;
+  donor: number | DonationDonor;
   created_at: string;
 }
- 
 export interface DonationSummary {
   project_id: number;
   target: number;
