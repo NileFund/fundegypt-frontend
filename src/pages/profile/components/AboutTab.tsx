@@ -1,16 +1,59 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2, HeartHandshake } from "lucide-react"; // Added HeartHandshake
+import { Trash2, HeartHandshake } from "lucide-react";
 import DeleteAccountModal from "./DeleteAccountModal";
 import { useAuth } from "../../../context/useAuth";
 import { ROUTES } from "../../../utils/constants";
+import { getMyDonations } from "../../../services/donationService"; // <-- Imported donation service
 
 export default function AboutTab() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, isLoading } = useAuth();
+  // Renamed the auth loading state to avoid confusion
+  const { user, isLoading: isAuthLoading } = useAuth();
 
-  if (isLoading) {
+  // --- NEW: State to hold our calculated frontend statistics ---
+  const [stats, setStats] = useState({
+    projectsSupported: 0,
+    totalContribution: 0,
+    impactLevel: "Newcomer",
+  });
+
+  // --- NEW: Fetch donations and calculate math on the frontend ---
+  useEffect(() => {
+    const fetchAndCalculateStats = async () => {
+      try {
+        const data = await getMyDonations();
+        // Handle both paginated (.results) and unpaginated array responses safely
+        const donations = data.results || data || [];
+
+        // 1. Calculate Total Contribution (Sum of all donation amounts)
+        const total = donations.reduce((sum: number, donation: any) => sum + Number(donation.amount), 0);
+
+        // 2. Calculate Unique Projects Supported (Using a Set to remove duplicates)
+        const uniqueProjects = new Set(donations.map((donation: any) => donation.project)).size;
+
+        // 3. Calculate Impact Level dynamically based on the total
+        let level = "Newcomer";
+        if (total >= 50000) level = "Visionary";
+        else if (total >= 10000) level = "Champion";
+        else if (total > 0) level = "Supporter";
+
+        // Save the math to our state!
+        setStats({
+          projectsSupported: uniqueProjects,
+          totalContribution: total,
+          impactLevel: level,
+        });
+      } catch (err) {
+        console.error("Failed to load donations for stats:", err);
+      }
+    };
+
+    fetchAndCalculateStats();
+  }, []);
+
+  if (isAuthLoading) {
     return <div className="animate-pulse p-8 flex justify-center text-gray-500">Loading profile information...</div>;
   }
 
@@ -72,18 +115,21 @@ export default function AboutTab() {
             <div className="space-y-6">
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 font-medium">Projects Supported</span>
-                <span className="text-2xl font-bold text-[#1F6F5F]">{user.projectsSupported || 0}</span>
+                {/* Now using frontend stats! */}
+                <span className="text-2xl font-bold text-[#1F6F5F]">{stats.projectsSupported}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 font-medium">Total Contribution</span>
+                {/* Now using frontend stats! */}
                 <span className="text-2xl font-bold text-[#1F6F5F]">
-                  EGP {user.totalContribution?.toLocaleString() || 0}
+                  EGP {stats.totalContribution.toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 font-medium">Impact Level</span>
+                {/* Now using frontend stats! */}
                 <span className="px-3 py-1 rounded-full bg-[#E6F4F1] text-[#1F6F5F] text-xs font-bold uppercase tracking-tight">
-                  {user.impactLevel || "Newcomer"}
+                  {stats.impactLevel}
                 </span>
               </div>
             </div>
@@ -91,7 +137,6 @@ export default function AboutTab() {
 
           {/* Call to Action Card */}
           <div className="bg-[#1F6F5F] p-6 rounded-xl text-white shadow-md">
-            {/* Replaced broken span with HeartHandshake Icon */}
             <HeartHandshake size={48} className="mb-4 text-[#A7F3D0]" />
             <h4 className="text-xl font-bold mb-2">Ready to start?</h4>
             <p className="text-emerald-50 text-sm mb-6 leading-snug opacity-90">

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { PlusCircle, Star, Image as ImageIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // Added for routing
-import { getMyProjects } from "../../../services/projectService"; // Adjust path
+import { useNavigate } from "react-router-dom";
+import { getMyProjects } from "../../../services/projectService";
 import { type Project } from "../../../types";
-import { ROUTES } from "../../../utils/constants"; // Adjust path
+import { ROUTES } from "../../../utils/constants";
 
 export default function MyProjectsTab() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -15,9 +15,7 @@ export default function MyProjectsTab() {
     const fetchMyProjects = async () => {
       try {
         setIsLoading(true);
-        // Calls the real Django endpoint
         const response = await getMyProjects();
-        // Assuming your getMyProjects returns a paginated response based on projectService.ts
         setProjects(response.results || response);
       } catch (err) {
         console.error("Failed to load campaigns:", err);
@@ -30,14 +28,12 @@ export default function MyProjectsTab() {
     fetchMyProjects();
   }, []);
 
-  // --- Helper to calculate progress bar color ---
   const getProgressColor = (percent: number) => {
-    if (percent < 25) return "#E53E3E"; // Red
-    if (percent <= 75) return "#F57F17"; // Amber
-    return "#6FCF97"; // Green
+    if (percent < 25) return "#E53E3E";
+    if (percent <= 75) return "#F57F17";
+    return "#6FCF97";
   };
 
-  // --- Helper to calculate Days Left from Django's endTime ---
   const calculateDaysLeft = (endTime: string) => {
     if (!endTime) return 0;
     const end = new Date(endTime).getTime();
@@ -47,7 +43,6 @@ export default function MyProjectsTab() {
     return days > 0 ? days : 0;
   };
 
-  // --- STATE 1: LOADING SKELETON ---
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
@@ -66,7 +61,6 @@ export default function MyProjectsTab() {
     );
   }
 
-  // --- STATE 2: ERROR ---
   if (error) {
     return (
       <div className="bg-surface-error border-l-4 border-danger p-4 rounded-md">
@@ -75,7 +69,6 @@ export default function MyProjectsTab() {
     );
   }
 
-  // --- STATE 3: EMPTY STATE ---
   if (projects.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 bg-white border border-brand-mint rounded-xl animate-in fade-in">
@@ -93,7 +86,6 @@ export default function MyProjectsTab() {
     );
   }
 
-  // --- STATE 4: DATA LOADED ---
   return (
     <div className="animate-in fade-in duration-300">
       <div className="flex justify-between items-center mb-6">
@@ -107,25 +99,22 @@ export default function MyProjectsTab() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        {
-          Array.isArray(projects) && projects.map((project) => {
-            // Guard against division by zero if target is 0
+        {Array.isArray(projects) &&
+          projects.map((project) => {
             const percent =
-              project.totalTarget > 0 ? Math.min(Math.round((project.totalDonated / project.totalTarget) * 100), 100) : 0;
+              project.totalTarget > 0
+                ? Math.min(Math.round((project.totalDonated / project.totalTarget) * 100), 100)
+                : 0;
             const barColor = getProgressColor(percent);
             const daysLeft = calculateDaysLeft(project.endTime);
-
-            // Grab the first image from the pictures array, or null if empty
             const displayImage = project.pictures?.length > 0 ? project.pictures[0].image : null;
 
             return (
               <div
                 key={project.id}
                 className="bg-white rounded-xl border border-brand-mint shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-200 overflow-hidden flex flex-col group cursor-pointer"
-                onClick={() => navigate(`${ROUTES.PROJECT_DETAIL.replace(":id", project.id.toString())}`)} // Assuming you want clicking to go to detail page
-              >
-                {/* Image & Badge */}
+                onClick={() => navigate(`${ROUTES.PROJECT_DETAIL.replace(":id", project.id.toString())}`)}>
+                {/* 1. Image Section (Closed properly now) */}
                 <div className="relative h-48 w-full bg-surface-page overflow-hidden flex items-center justify-center">
                   {displayImage ? (
                     <img
@@ -136,77 +125,59 @@ export default function MyProjectsTab() {
                   ) : (
                     <ImageIcon size={48} className="text-[#CBD5E0]" />
                   )}
+                </div>
 
-                  <div className="flex justify-between items-end mb-4">
-                    <div>
-                      <span className="text-sm font-bold text-[#1F6F5F]">
-                        {Number(project.totalDonated).toLocaleString("en-US")} EGP
-                      </span>
-                      <span className="text-xs text-text-body block mt-0.5">
-                        raised of {Number(project.totalTarget).toLocaleString("en-US")} EGP
+                {/* 2. Content Section (Now outside the image!) */}
+                <div className="p-5 flex flex-col grow">
+                  <h3 className="text-lg font-semibold text-[#1F6F5F] line-clamp-2 leading-tight mb-2">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-text-body line-clamp-2 mb-4 grow">{project.details}</p>
+
+                  <div className="mt-auto">
+                    <div className="bg-brand-mint rounded-full h-2 overflow-hidden mb-2">
+                      <div
+                        className="h-full rounded-full transition-all duration-1000 ease-out"
+                        style={{ width: `${percent}%`, backgroundColor: barColor }}
+                      />
+                    </div>
+
+                    <div className="flex justify-between items-end mb-4">
+                      <div>
+                        <span className="text-sm font-bold text-[#1F6F5F]">
+                          {Number(project.totalDonated).toLocaleString("en-US")} EGP
+                        </span>
+                        <span className="text-xs text-text-body block mt-0.5">
+                          raised of {Number(project.totalTarget).toLocaleString("en-US")}
+                        </span>
+                      </div>
+                      <span className="text-sm font-bold" style={{ color: barColor }}>
+                        {percent}%
                       </span>
                     </div>
-                    <span className="text-sm font-bold" style={{ color: barColor }}>
-                      {percent}%
-                    </span>
-                  </div>
 
-                  {/* Content */}
-                  <div className="p-5 flex flex-col grow">
-                    <h3 className="text-lg font-semibold text-[#1F6F5F] line-clamp-2 leading-tight mb-2">
-                      {project.title}
-                    </h3>
-                    {/* Mapped 'description' to 'details' per types.ts */}
-                    <p className="text-sm text-text-body line-clamp-2 mb-4 grow">{project.details}</p>
-
-                    {/* Progress Bar */}
-                    <div className="mt-auto">
-                      <div className="bg-brand-mint rounded-full h-2 overflow-hidden mb-2">
-                        <div
-                          className="h-full rounded-full transition-all duration-1000 ease-out"
-                          style={{ width: `${percent}%`, backgroundColor: barColor }}
+                    <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                      <div className="flex items-center text-sm text-text-body">
+                        <Star
+                          size={16}
+                          className={
+                            project.averageRating > 0 ? "text-[#F6AD55] mr-1 fill-[#F6AD55]" : "text-brand-mint mr-1"
+                          }
                         />
-                      </div>
-
-                      <div className="flex justify-between items-end mb-4">
-                        <div>
-                          <span className="text-sm font-bold text-[#1F6F5F]">
-                            {Number(project.totalDonated).toLocaleString("ar-EG")} EGP
-                          </span>
-                          <span className="text-xs text-text-body block mt-0.5">
-                            raised of {Number(project.totalTarget).toLocaleString("ar-EG")}
-                          </span>
-                        </div>
-                        <span className="text-sm font-bold" style={{ color: barColor }}>
-                          {percent}%
+                        <span className="font-medium mt-0.5">
+                          {project.averageRating > 0 ? project.averageRating.toFixed(1) : "New"}
                         </span>
                       </div>
-
-                      {/* Footer Metrics */}
-                      <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                        <div className="flex items-center text-sm text-text-body">
-                          <Star
-                            size={16}
-                            className={
-                              project.averageRating > 0 ? "text-[#F6AD55] mr-1 fill-[#F6AD55]" : "text-brand-mint mr-1"
-                            }
-                          />
-                          <span className="font-medium mt-0.5">
-                            {project.averageRating > 0 ? project.averageRating.toFixed(1) : "New"}
-                          </span>
-                        </div>
-                        <span className="bg-[#FFF8E1] text-warning text-xs font-semibold px-2.5 py-1 rounded-full">
-                          {daysLeft} days left
-                        </span>
-                      </div>
+                      <span className="bg-[#FFF8E1] text-warning text-xs font-semibold px-2.5 py-1 rounded-full">
+                        {daysLeft} days left
+                      </span>
                     </div>
                   </div>
-                </div >
+                </div>
               </div>
             );
-          })
-        }
-      </div >
-    </div >
+          })}
+      </div>
+    </div>
   );
 }
