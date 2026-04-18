@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ROUTES, APP_NAME } from '../../../utils/constants'
 import { Menu, X } from 'lucide-react'
+import Logo from '../../../assets/favicon.png'
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -18,6 +19,7 @@ const Navbar = () => {
             to={ROUTES.HOME}
             className="text-2xl font-bold tracking-tight bg-linear-to-r from-brand-mint to-brand-success bg-clip-text text-transparent hover:scale-105 transition-transform duration-300"
           >
+            <img src={Logo} alt={APP_NAME} className="w-8 h-8 inline-block mr-2 -mt-1" />
             {APP_NAME}
           </Link>
 

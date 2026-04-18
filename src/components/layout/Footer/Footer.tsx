@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { APP_NAME, ROUTES } from '../../../utils/constants';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import logo from '../../../assets/favicon.png';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -16,6 +17,7 @@ const Footer = () => {
               to={ROUTES.HOME}
               className="text-2xl font-bold tracking-tight bg-linear-to-r from-brand-mint to-brand-success bg-clip-text text-transparent"
             >
+              <img src={logo} alt={APP_NAME} className="w-8 h-8 inline-block mr-2 -mt-1" />
               {APP_NAME}
             </Link>
             <p className="text-gray-300 leading-relaxed max-w-xs mt-2">
