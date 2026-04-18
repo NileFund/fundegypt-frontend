@@ -85,3 +85,9 @@ export async function getMyProjects(): Promise<PaginatedResponse<Project>> {
   const { data } = await api.get<PaginatedResponse<Project>>("/projects/my_campaigns/");
   return data;
 }
+
+// POST /api/reports/projects/:projectId/report/
+export async function reportProject(projectId: number, reason?: string): Promise<void> {
+  const payload = reason ? { reason } : {};
+  await api.post(`/reports/projects/${projectId}/report/`, payload);
+}

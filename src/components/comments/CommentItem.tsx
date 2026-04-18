@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/useAuth'
 import Button from '../ui/Button'
 import { formatDistanceToNow } from 'date-fns'
@@ -73,7 +72,6 @@ export default function CommentItem({
       await reportComment(comment.id, reportReason.trim() || undefined);
       setShowReportDialog(false);
       setReportReason('');
-      // Optional: show success toast/alert
       alert('Comment reported. Thank you for your feedback.');
     } catch (err) {
       setReportError(err instanceof Error ? err.message : 'Failed to report comment');
@@ -114,9 +112,8 @@ export default function CommentItem({
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             {authorId ? (
-              <Link
-                to={`/profile/${authorId}`}
-                className="shrink-0 w-10 h-10 rounded-full bg-brand-mint flex items-center justify-center overflow-hidden hover:opacity-80 transition-opacity"
+              <div
+                className="shrink-0 w-10 h-10 rounded-full bg-brand-mint flex items-center justify-center overflow-hidden"
               >
                 {profilePicture ? (
                   <img
@@ -129,7 +126,7 @@ export default function CommentItem({
                     {userInitial}
                   </span>
                 )}
-              </Link>
+              </div>
             ) : (
               <div className="shrink-0 w-10 h-10 rounded-full bg-brand-mint flex items-center justify-center">
                 <span className="text-brand-primary font-bold text-sm">
@@ -139,12 +136,11 @@ export default function CommentItem({
             )}
             <div className="min-w-0">
               {authorId ? (
-                <Link
-                  to={`/profile/${authorId}`}
+                <div
                   className="font-semibold text-text-primary hover:text-brand-primary transition-colors text-sm truncate block"
                 >
                   {username}
-                </Link>
+                </div>
               ) : (
                 <p className="font-semibold text-text-primary text-sm truncate">
                   {username}
