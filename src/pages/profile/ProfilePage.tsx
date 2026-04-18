@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { User as UserIcon, Calendar } from "lucide-react";
 import { ROUTES } from "../../utils/constants";
-import EditProfileModal from "./components/EditProfileModal"; // Adjust path as needed
-import { useAuth } from "../../context/useAuth"; // Adjust path as needed
+import EditProfileModal from "./components/EditProfileModal"; 
+import { useAuth } from "../../context/useAuth"; 
 
 export default function ProfilePage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
