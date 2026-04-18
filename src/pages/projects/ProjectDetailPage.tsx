@@ -21,6 +21,8 @@ import {
 } from '../../services/commentService'
 import CommentSection from '../../components/comments/CommentSection'
 import RatingSection from '../../components/ratings/RatingSection'
+import { Flag } from 'lucide-react'
+import { reportProject } from '../../services/projectService'
 
 function daysLeft(endTime: string): number {
   return Math.max(0, Math.ceil((new Date(endTime).getTime() - Date.now()) / 86_400_000))
@@ -36,6 +38,10 @@ export default function ProjectDetailPage() {
   const [donationError, setDonationError] = useState('')
   const [donationSuccess, setDonationSuccess] = useState(false)
   const [cancelError, setCancelError] = useState('')
+  const [showReportDialog, setShowReportDialog] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportError, setReportError] = useState('')
+  const [reportSuccess, setReportSuccess] = useState('') 
 
   const { data: project, isLoading: projectLoading } = useQuery({
     queryKey: ['project', id],
@@ -136,6 +142,27 @@ export default function ProjectDetailPage() {
     }
     donateMutation.mutate()
   }
+  const handleReportProject = async () => {
+  try {
+    setReportError('')
+    setReportSuccess('')
+    await reportProject(Number(id), reportReason.trim() || undefined)
+    setReportSuccess('Project reported successfully. Thank you for your feedback.')
+    setReportReason('')
+    setShowReportDialog(false)
+     setTimeout(() => {
+      setReportSuccess('')
+    }, 4000)
+  } catch (err: any) {
+    const data = err?.response?.data
+    const msg =
+      data?.detail ||
+      data?.message ||
+      data?.error ||
+      'Failed to report project'
+    setReportError(msg)
+  }
+}
 
   if (projectLoading) return <Spinner centered />
   if (!project) return <p className="text-center py-16 text-text-muted">Project not found.</p>
@@ -150,6 +177,7 @@ export default function ProjectDetailPage() {
 
   const images = Array.isArray(project.pictures) ? project.pictures.map(i => i.image) : []
   const heroImg = images[imgIndex] ?? null
+  const canReport = user && !isOwner
 
   return (
     <div className="pb-20">
@@ -299,7 +327,22 @@ export default function ProjectDetailPage() {
               <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-1">Campaign by</p>
               <p className="text-sm font-medium text-text-primary truncate">{project.owner}</p>
             </div>
-
+              {canReport && (
+              <div className="border-t border-gray-100 pt-4">
+              <button
+              onClick={() => setShowReportDialog(true)}
+              className="w-full flex items-center justify-center gap-2 text-sm text-red-500 hover:text-red-600 transition-colors">
+                     
+             <Flag size={16} />
+              Report Project
+             </button>
+             {reportSuccess && (
+             <div className="mt-3 p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
+             {reportSuccess}
+             </div>
+             )}
+             </div>
+             )}
             {isOwner && (
               <div className="flex flex-col gap-2 border-t border-gray-100 pt-4">
                 <Button variant="secondary" onClick={() => navigate(`/projects/${id}/edit`)}>
@@ -328,6 +371,42 @@ export default function ProjectDetailPage() {
           </div>
         </section>
       )}
+      {showReportDialog && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl p-6 w-full max-w-md space-y-4">
+      <h3 className="text-lg font-semibold text-text-primary">
+        Report this project
+      </h3>
+
+      <textarea
+        value={reportReason}
+        onChange={(e) => setReportReason(e.target.value)}
+        placeholder="Optional: describe the issue (spam, fraud, etc.)"
+        className="w-full border border-gray-200 rounded-lg p-3 text-sm"
+        rows={3}
+      />
+
+      {reportError && (
+        <p className="text-xs text-red-500">{reportError}</p>
+      )}
+
+      <div className="flex gap-2 justify-end">
+        <Button
+          variant="secondary"
+          onClick={() => setShowReportDialog(false)}
+        >
+          Cancel
+        </Button>
+        <Button
+          className="bg-red-500 hover:bg-red-600 text-white"
+          onClick={handleReportProject}
+        >
+          Submit Report
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   )
 }
