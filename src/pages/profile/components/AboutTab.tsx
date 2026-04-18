@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trash2, HeartHandshake } from "lucide-react";
@@ -142,11 +143,11 @@ export default function AboutTab() {
             <p className="text-emerald-50 text-sm mb-6 leading-snug opacity-90">
               Launch your own campaign today and make a real difference in Egypt.
             </p>
-            <button
+            {user && <button
               onClick={() => navigate(ROUTES.CREATE_PROJECT)}
               className="w-full py-3 bg-white text-[#1F6F5F] font-bold rounded-lg shadow-sm hover:bg-gray-50 hover:shadow transition-all active:scale-95">
               Start Campaign
-            </button>
+            </button>}
           </div>
         </div>
       </div>

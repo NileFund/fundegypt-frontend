@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom';
 import { APP_NAME, ROUTES } from '../../../utils/constants';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import logo from '../../../assets/favicon.png';
+import { useAuth } from '../../../context/useAuth';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { user } = useAuth();
 
   return (
     <footer className="relative glass-shine text-white pt-8 pb-4 px-6 overflow-hidden border-t border-white/10 shadow-2xl">
@@ -41,12 +43,12 @@ const Footer = () => {
                   Categories
                 </Link>
               </li>
-              <li>
+              {user && <li>
                 <Link to={ROUTES.CREATE_PROJECT} className="hover:text-brand-mint transition-colors duration-200 flex items-center gap-2 group">
                   <span className="w-0 h-0.5 bg-brand-primary transition-all duration-200 group-hover:w-2"></span>
                   Start a Campaign
                 </Link>
-              </li>
+              </li>}
             </ul>
           </div>
 

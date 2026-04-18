@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ROUTES, APP_NAME } from '../../../utils/constants'
 import { Menu, X } from 'lucide-react'
 import Logo from '../../../assets/favicon.png'
+import { useAuth } from '../../../context/useAuth'
 
 const Navbar = () => {
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const isLoggedIn = !!localStorage.getItem('access_token')
-
+  const user = useAuth().user;
+  console.log('Navbar user:', user);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
   return (
@@ -34,10 +36,10 @@ const Navbar = () => {
                   Categories
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-primary transition-all duration-300 group-hover:w-full"></span>
                 </Link>
-                <Link to={ROUTES.CREATE_PROJECT} className="relative font-medium group transition-all duration-300 hover:text-brand-mint">
+                {user && <Link to={ROUTES.CREATE_PROJECT} className="relative font-medium group transition-all duration-300 hover:text-brand-mint">
                   Start Campaign
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-primary transition-all duration-300 group-hover:w-full"></span>
-                </Link>
+                </Link>}
               </div>
 
               <div className="hidden md:flex items-center gap-6">
@@ -52,42 +54,47 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex items-center gap-4">
-              <Link
+              {user && <Link
                 to={ROUTES.CREATE_PROJECT}
                 className="bg-brand-primary hover:bg-brand-success text-white px-5 py-2 rounded-full font-bold text-sm shadow-lg transition-all active:scale-95 btn-3d"
               >
                 Start a fundraiser
-              </Link>
+              </Link>}
               <button
                 onClick={() => navigate(ROUTES.LOGIN)}
-                className="hidden md:block font-bold text-sm hover:text-brand-mint transition-colors"
+                className="cursor-pointer hidden md:block font-bold text-sm hover:text-brand-mint transition-colors"
               >
                 Login
               </button>
             </div>
           )}
 
-          {isLoggedIn && (
+          {(
             <div className="md:hidden flex items-center">
-              <button onClick={toggleMenu} className="p-2 rounded-md hover:bg-brand-primary/20 transition-colors">
+              <button onClick={toggleMenu} className="p-2 text-white rounded-md hover:bg-brand-primary/20 transition-colors">
                 {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
               </button>
             </div>
           )}
         </div>
 
-        {isLoggedIn && isMenuOpen && (
+        {isMenuOpen && (
           <div className="md:hidden mt-4 pb-6 transition-all duration-500">
             <div className="flex flex-col gap-4">
               <Link to={ROUTES.EXPLORE} className="text-lg font-medium hover:text-brand-mint py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Explore</Link>
               <Link to={ROUTES.CATEGORY} className="text-lg font-medium hover:text-brand-mint py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Categories</Link>
-              <Link to={ROUTES.CREATE_PROJECT} className="text-lg font-medium hover:text-brand-mint py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Start Campaign</Link>
-              <button
+              {user && <Link to={ROUTES.CREATE_PROJECT} className="text-lg font-medium hover:text-brand-mint py-2 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Start Campaign</Link>}
+              {user ? (<button
                 onClick={() => { localStorage.clear(); window.location.href = ROUTES.HOME }}
                 className="bg-brand-primary text-white py-3 rounded-xl font-semibold"
               >
                 Logout
-              </button>
+              </button>) : (<button
+                onClick={() => navigate(ROUTES.LOGIN)}
+                className="cursor-pointer bg-brand-primary text-white py-3 rounded-xl font-semibold"
+              >
+                Login
+              </button>)}
             </div>
           </div>
         )}

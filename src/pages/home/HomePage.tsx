@@ -10,6 +10,8 @@ import { formatEGP } from '../../utils/formatters'
 import { type Project } from '../../types'
 import { Star, ChevronRight } from 'lucide-react'
 import { getFeaturedProjects, getLatestProjects, getTopRatedProjects } from '../../services/projectService'
+import { ROUTES } from '../../utils/constants'
+import { useAuth } from '../../context/useAuth'
 
 function daysLeft(endTime: string): number {
   return Math.max(0, Math.ceil((new Date(endTime).getTime() - Date.now()) / 86_400_000))
@@ -93,6 +95,7 @@ export default function HomePage() {
   const topRatedProjects = (topRatedData ?? []).slice(0, 5)
   const featuredProjects = (featuredData ?? []).slice(0, 5)
   const latestProjects = (latestData ?? []).slice(0, 5)
+  const user = useAuth().user;
 
   const isLoading = topRatedLoading || featuredLoading || latestLoading
 
@@ -119,10 +122,10 @@ export default function HomePage() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
-                to="/projects/create"
+                to={user ? ROUTES.CREATE_PROJECT : ROUTES.LOGIN}
                 className="bg-brand-primary hover:bg-[#278a72] text-white px-8 py-4 rounded-lg font-bold text-base transition-all duration-200 shadow-lg shadow-black/20"
               >
-                Start Your Campaign
+                {user ? "Start Your Campaign" : "Login to Create Project"}
               </Link>
             </div>
           </div>
@@ -267,10 +270,10 @@ export default function HomePage() {
               <p className="text-lg font-medium">No active projects yet.</p>
               <p className="text-sm mt-2">Be the first to start a campaign!</p>
               <Link
-                to="/projects/create"
+                to={user ? ROUTES.CREATE_PROJECT : ROUTES.LOGIN}
                 className="inline-block mt-6 bg-brand-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#278a72] transition-colors"
               >
-                Start a Campaign
+                {user ? "Start Your Campaign" : "Login to Start a Campaign"}
               </Link>
             </div>
           )}

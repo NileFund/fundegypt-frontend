@@ -3,10 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import api from '../../services/api';
-import { ROUTES, APP_NAME } from '../../utils/constants';
+import { ROUTES } from '../../utils/constants';
 import { validateEmail } from '../../utils/validators';
 import { setTokens } from '../../utils/authHelpers';
-import Logo from '../../assets/favicon.png';
+import Navbar from '../../components/layout/Navbar/Navbar';
 
 const LoginPage = () => {
   const location = useLocation();
@@ -103,23 +103,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-surface-page relative overflow-hidden flex flex-col">
       <div className="absolute top-[-10%] right-[-10%] w-125 h-125 bg-brand-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
-
-      <header className="w-full px-4 md:px-8 py-4 flex justify-between items-center z-10 border-b border-black/5 bg-white/50 backdrop-blur-md">
-        <Link
-          to={ROUTES.HOME}
-          className="text-2xl font-black tracking-tighter text-brand-secondary hover:scale-105 transition-transform duration-300"
-        >
-          <img src={Logo} alt={APP_NAME} className="w-8 h-8 inline-block mr-2 -mt-1" />
-          {APP_NAME}
-        </Link>
-        <Link
-          to={ROUTES.CREATE_PROJECT}
-          className="bg-brand-primary hover:bg-brand-success text-white px-5 py-2 rounded-full font-bold text-sm shadow-lg transition-all active:scale-95 btn-3d"
-        >
-          Start a fundraiser
-        </Link>
-      </header>
-
+      <Navbar />
       <div className="grow flex items-center justify-center p-4">
         <div className="w-full max-w-md glass-shine rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative z-10 transition-all duration-500">
           <div className="text-center mb-6 md:mb-8">
@@ -227,7 +211,7 @@ const LoginPage = () => {
           </p>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
