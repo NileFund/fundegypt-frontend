@@ -12,6 +12,7 @@ import { Star, ChevronRight } from 'lucide-react'
 import { getFeaturedProjects, getLatestProjects, getTopRatedProjects } from '../../services/projectService'
 import { ROUTES } from '../../utils/constants'
 import { useAuth } from '../../context/useAuth'
+import { getImageUrl } from '../../utils/helpers'
 
 function daysLeft(endTime: string): number {
   return Math.max(0, Math.ceil((new Date(endTime).getTime() - Date.now()) / 86_400_000))
@@ -155,7 +156,7 @@ export default function HomePage() {
                 >
                   <div className="w-16 h-16 rounded-2xl bg-brand-mint flex items-center justify-center group-hover:bg-brand-primary transition-all duration-300">
                     {c.icon ? (
-                      <img src={c.icon} alt={c.name} className="w-8 h-8 object-contain" />
+                      <img src={getImageUrl(c.icon)} alt={c.name} className="w-8 h-8 object-contain" />
                     ) : (
                       <span className="text-brand-primary group-hover:text-white font-bold text-lg transition-colors">
                         {c.name.charAt(0).toUpperCase()}

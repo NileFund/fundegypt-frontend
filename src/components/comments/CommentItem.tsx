@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../../context/useAuth'
 import Button from '../ui/Button'
 import { formatDistanceToNow } from 'date-fns'
+import { getImageUrl } from '../../utils/helpers'
 import { reportComment } from '../../services/commentService';
 import { MessageCircle, Trash2, Edit2, Flag } from 'lucide-react'
 
@@ -12,6 +13,7 @@ export interface Comment {
     id: number
     username: string
     profilePicture?: string
+    profilePic?: string
   }
   createdAt: string
   updatedAt: string
@@ -59,7 +61,7 @@ export default function CommentItem({
 
   const username = comment.author?.username || 'Anonymous'
   const authorId = comment.author?.id
-  const profilePicture = comment.author?.profilePicture
+  const profilePicture = comment.author?.profilePicture || comment.author?.profilePic
   const userInitial = username.charAt(0).toUpperCase()
 
   const [showReportDialog, setShowReportDialog] = useState(false);
@@ -117,7 +119,7 @@ export default function CommentItem({
               >
                 {profilePicture ? (
                   <img
-                    src={profilePicture}
+                    src={getImageUrl(profilePicture)}
                     alt={username}
                     className="w-full h-full object-cover"
                   />

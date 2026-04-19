@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { type Project } from '../../types'
 import { formatEGP, getPercent } from '../../utils/formatters'
+import { getImageUrl } from '../../utils/helpers'
 
 interface ProjectCardProps {
   project: Project
@@ -11,15 +12,15 @@ function daysLeft(endTime: string): number {
 }
 
 function barColor(percent: number): string {
-  if (percent < 25)  return 'bg-danger'
-  if (percent < 75)  return 'bg-warning'
+  if (percent < 25) return 'bg-danger'
+  if (percent < 75) return 'bg-warning'
   return 'bg-brand-success'
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const percent    = getPercent(project.totalDonated, project.totalTarget)
+  const percent = getPercent(project.totalDonated, project.totalTarget)
   const coverImage = project.pictures?.[0]?.image
-  const days       = daysLeft(project.endTime)
+  const days = daysLeft(project.endTime)
 
   return (
     <Link
@@ -29,7 +30,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <div className="relative h-44 bg-gray-200 overflow-hidden">
         {coverImage ? (
           <img
-            src={coverImage}
+            src={getImageUrl(coverImage)}
             alt={project.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
@@ -43,11 +44,10 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </span>
         )}
 
-        <span className={`absolute top-3 right-3 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
-          days <= 3 ? 'bg-red-500 text-white' :
-          days <= 7 ? 'bg-amber-400 text-white' :
-                      'bg-brand-primary text-white'
-        }`}>
+        <span className={`absolute top-3 right-3 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${days <= 3 ? 'bg-red-500 text-white' :
+            days <= 7 ? 'bg-amber-400 text-white' :
+              'bg-brand-primary text-white'
+          }`}>
           {days === 0 ? 'Ended' : `${days}d left`}
         </span>
       </div>

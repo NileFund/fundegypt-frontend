@@ -81,7 +81,10 @@ export default function MyDonationsTab() {
         <p className="text-text-muted mb-6">
           You haven't donated to any project yet.
         </p>
-        <button className="border border-brand-mint text-brand-mint hover:bg-surface-page font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200">
+        <button
+          onClick={() => navigate(ROUTES.EXPLORE)}
+          className="cursor-pointer border border-brand-mint text-brand-mint hover:bg-surface-page font-medium text-sm px-6 py-2.5 rounded-lg transition-colors duration-200"
+        >
           Explore Projects
         </button>
       </div>

@@ -52,17 +52,16 @@ A modern, responsive crowdfunding platform built with React and TypeScript. Nile
 
 ```plaintext
 src/
-├── assets/            # Static assets like images and fonts
+├── assets/            # Static assets (images, icons)
 ├── components/        # Reusable React components
-├── features/          # Feature-based folders (e.g., auth, projects)
-├── hooks/             # Custom React hooks
-├── layouts/          # Layout components for consistent styling
-├── pages/            # Page components for routing
-├── services/         # API calls and business logic
-├── store/            # Global state management (e.g., Redux, Zustand)
-├── styles/           # Global styles and CSS frameworks
-├── utils/            # Utility functions and helpers
-└── App.tsx           # Root component
+│   ├── layout/       # Navbar, Footer
+│   ├── ui/           # Generic UI components (Button, Modal, etc.)
+│   └── project/      # Project-specific components
+├── context/           # React Context (Auth, etc.)
+├── pages/             # Page components/routes
+├── services/          # API services
+├── types/             # TypeScript interfaces
+└── utils/             # Helpers, constants, formatters
 ```
 
 ## 🚀 Getting Started

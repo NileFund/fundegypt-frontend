@@ -207,31 +207,28 @@ export default function CreateProjectPage() {
 
               <div className="space-y-3">
                 <label className="block text-xs font-medium uppercase tracking-widest text-text-muted">
-                  Project Images (up to 5)
+                  Project Cover Image
                 </label>
                 <label className="flex flex-col items-center justify-center w-full aspect-4/1 rounded-lg border-2 border-dashed border-gray-200 hover:border-brand-primary cursor-pointer transition-colors bg-gray-50 hover:bg-brand-mint/10">
                   <svg className="w-8 h-8 text-text-muted mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   <span className="text-sm text-text-muted">
-                    {f.values.images.length > 0 ? `${f.values.images.length} file(s) selected` : 'Click to upload images'}
+                    {f.values.images.length > 0 ? f.values.images[0].name : 'Click to upload cover image'}
                   </span>
                   <input
                     type="file"
                     accept="image/*"
-                    multiple
                     className="hidden"
                     onChange={e => {
-                      const files = Array.from(e.target.files ?? []).slice(0, 5)
-                      f.setFieldValue('images', files)
+                      const file = e.target.files?.[0]
+                      f.setFieldValue('images', file ? [file] : [])
                     }}
                   />
                 </label>
                 {f.values.images.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {Array.isArray(f.values.images) && f.values.images.map((img, i) => (
-                      <span key={i} className="text-xs bg-brand-mint text-text-primary px-2 py-1 rounded-full">{img.name}</span>
-                    ))}
+                    <span className="text-xs bg-brand-mint text-text-primary px-3 py-1.5 rounded-full font-medium">Selected: {f.values.images[0].name}</span>
                   </div>
                 )}
               </div>

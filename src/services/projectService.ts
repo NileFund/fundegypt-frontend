@@ -22,6 +22,7 @@ export interface DonationSummary {
   totalTarget: number;
   remaining: number;
   percentage: number;
+  donors_count: number;
 }
 
 // GET /projects/?status=running&category=1&page=2
