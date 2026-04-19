@@ -4,11 +4,6 @@ interface ProgressBarProps {
   showLabel?: boolean
 }
 
-function getColor(percent: number): string {
-  if (percent < 25) return 'bg-danger'
-  if (percent < 75) return 'bg-warning'
-  return 'bg-brand-success'
-}
 
 export default function ProgressBar({ percent, showLabel = false }: ProgressBarProps) {
   const clamped = Math.min(100, Math.max(0, percent))
