@@ -5,6 +5,7 @@ export interface User {
   email: string
   phone: string
   profilePic: string | null
+  profilePicture: string | null
   country: string | null
   birthdate: string | null
   facebookProfile: string | null
@@ -81,6 +82,7 @@ export interface DonationSummary {
   total_donated: number;
   remaining: number;
   percentage: number;
+  donors_count: number;
 }
 
 export interface TopDonor {

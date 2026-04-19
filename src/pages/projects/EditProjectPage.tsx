@@ -14,12 +14,12 @@ import Button from '../../components/ui/Button'
 import Spinner from '../../components/ui/Spinner'
 
 const schema = Yup.object({
-  title:       Yup.string().min(10, 'At least 10 characters').required('Required'),
-  details:     Yup.string().min(50, 'At least 50 characters').required('Required'),
-  categoryId:  Yup.string().required('Pick a category'),
+  title: Yup.string().min(10, 'At least 10 characters').required('Required'),
+  details: Yup.string().min(50, 'At least 50 characters').required('Required'),
+  categoryId: Yup.string().required('Pick a category'),
   totalTarget: Yup.number().min(1, 'Must be at least 1 EGP').required('Required'),
-  startDate:   Yup.string().required('Required'),
-  endDate:     Yup.string()
+  startDate: Yup.string().required('Required'),
+  endDate: Yup.string()
     .required('Required')
     .test('after-start', 'Must be after start date', function (val) {
       return !this.parent.startDate || !val || val > this.parent.startDate
@@ -27,10 +27,9 @@ const schema = Yup.object({
 })
 
 const fieldClass = (touched: boolean | undefined, error: string | undefined) =>
-  `w-full bg-white rounded-lg px-4 py-3 text-sm text-text-body outline-none transition-all placeholder:text-text-muted ${
-    touched && error
-      ? 'ring-2 ring-danger border-transparent'
-      : 'ring-1 ring-gray-200 focus:ring-2 focus:ring-brand-primary border-transparent'
+  `w-full bg-white rounded-lg px-4 py-3 text-sm text-text-body outline-none transition-all placeholder:text-text-muted ${touched && error
+    ? 'ring-2 ring-danger border-transparent'
+    : 'ring-1 ring-gray-200 focus:ring-2 focus:ring-brand-primary border-transparent'
   }`
 
 function EditForm({ project, categories, allTags }: {
@@ -49,9 +48,9 @@ function EditForm({ project, categories, allTags }: {
 
   const f = useFormik({
     initialValues: {
-      title:       project.title,
-      details:     project.details,
-      categoryId:  String(project.category?.id ?? ''),
+      title: project.title,
+      details: project.details,
+      categoryId: String(project.category?.id ?? ''),
       totalTarget: String(project.totalTarget),
       startDate: project.startTime?.slice(0, 16) ?? '',
       endDate: project.endTime?.slice(0, 16) ?? '',
@@ -61,12 +60,12 @@ function EditForm({ project, categories, allTags }: {
     validationSchema: schema,
     onSubmit: (values, { setFieldError }) => {
       const form = new FormData()
-      form.append('title',        values.title)
-      form.append('details',      values.details)
-      form.append('category',     values.categoryId)
+      form.append('title', values.title)
+      form.append('details', values.details)
+      form.append('category', values.categoryId)
       form.append('total_target', values.totalTarget)
-      form.append('start_time',   values.startDate)
-      form.append('end_time',     values.endDate)
+      form.append('start_time', values.startDate)
+      form.append('end_time', values.endDate)
       values.tagNames.forEach(name => form.append('tag_names', name))
       values.images.forEach(img => form.append('uploaded_images', img))
 
@@ -75,11 +74,11 @@ function EditForm({ project, categories, allTags }: {
           const details = (err as { response?: { data?: { details?: Record<string, string[]> } } })
             ?.response?.data?.details
           if (details) {
-            if (details.start_time)   setFieldError('startDate',   details.start_time[0])
-            if (details.end_time)     setFieldError('endDate',     details.end_time[0])
-            if (details.title)        setFieldError('title',       details.title[0])
-            if (details.details)      setFieldError('details',     details.details[0])
-            if (details.category)     setFieldError('categoryId',  details.category[0])
+            if (details.start_time) setFieldError('startDate', details.start_time[0])
+            if (details.end_time) setFieldError('endDate', details.end_time[0])
+            if (details.title) setFieldError('title', details.title[0])
+            if (details.details) setFieldError('details', details.details[0])
+            if (details.category) setFieldError('categoryId', details.category[0])
             if (details.total_target) setFieldError('totalTarget', details.total_target[0])
           }
         },
@@ -106,7 +105,7 @@ function EditForm({ project, categories, allTags }: {
           </Link>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-text-primary">Edit Campaign</h1>
           <p className="text-text-body max-w-2xl text-lg mt-3">
-            Update your project details, adjust your funding goal, or add new images.
+            Update your project details, adjust your funding goal, or update your cover image.
           </p>
         </section>
 
@@ -221,40 +220,39 @@ function EditForm({ project, categories, allTags }: {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-8 border-b border-gray-100">
-                <h2 className="text-xl font-semibold text-text-primary">Visual Identity</h2>
+                <h2 className="text-xl font-semibold text-text-primary">Cover Image</h2>
               </div>
               <div className="p-8">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {Array.isArray(project.pictures) && project.pictures.map(pic => (
-                    <div key={pic.id} className="aspect-video rounded-lg overflow-hidden bg-gray-100">
-                      <img src={pic.image} alt="" className="w-full h-full object-cover" />
+                <div className="flex gap-4">
+                  {Array.isArray(project.pictures) && project.pictures.length > 0 && (
+                    <div className="w-1/2 aspect-video rounded-lg overflow-hidden bg-gray-100 border border-slate-200">
+                      <img src={project.pictures[0].image} alt="Current Cover" className="w-full h-full object-cover" />
                     </div>
-                  ))}
+                  )}
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="aspect-video rounded-lg border-2 border-dashed border-gray-200 hover:border-brand-primary flex flex-col items-center justify-center text-text-muted hover:text-brand-primary transition-colors"
+                    className="flex-1 aspect-video rounded-lg border-2 border-dashed border-gray-200 hover:border-brand-primary flex flex-col items-center justify-center text-text-muted hover:text-brand-primary transition-colors bg-slate-50"
                   >
                     <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
                     </svg>
-                    <span className="text-xs font-medium uppercase tracking-widest">Add Photo</span>
+                    <span className="text-xs font-semibold uppercase tracking-widest">Change Cover</span>
                   </button>
                   <input
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
-                    multiple
                     className="hidden"
                     onChange={e => {
-                      const files = Array.from(e.target.files ?? []).slice(0, 5)
-                      f.setFieldValue('images', files)
+                      const file = e.target.files?.[0]
+                      f.setFieldValue('images', file ? [file] : [])
                     }}
                   />
                 </div>
                 {f.values.images.length > 0 && (
-                  <p className="text-xs text-text-muted mt-3">
-                    {f.values.images.length} new file(s) selected — will be added on save
+                  <p className="text-xs text-brand-primary font-bold mt-4 bg-brand-primary/5 p-3 rounded-lg border border-brand-primary/10">
+                    New cover selected: {f.values.images[0].name} — will be updated on save
                   </p>
                 )}
               </div>
@@ -314,7 +312,7 @@ export default function EditProjectPage() {
   })
 
   const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
-  const { data: allTags }    = useQuery({ queryKey: ['tags'],       queryFn: getTags })
+  const { data: allTags } = useQuery({ queryKey: ['tags'], queryFn: getTags })
 
   if (isLoading) return <Spinner centered />
   if (!project) return <p className="text-center py-16 text-text-muted">Project not found.</p>

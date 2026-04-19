@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { User as UserIcon, Calendar, Share2 } from "lucide-react";
 import { ROUTES } from "../../utils/constants";
+import { getImageUrl } from "../../utils/helpers";
 import EditProfileModal from "./components/EditProfileModal";
 import { useAuth } from "../../context/useAuth";
 
@@ -55,10 +56,10 @@ export default function ProfilePage() {
             <div className="flex flex-col md:flex-row items-start md:items-end space-y-4 md:space-y-0 md:space-x-8">
               {/* Profile Picture */}
               <div className="p-2 bg-white rounded-full shadow-sm">
-                {user.profilePic ? (
+                {(user.profilePic || user.profilePicture) ? (
                   <img
                     className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white"
-                    src={user.profilePic}
+                    src={getImageUrl(user.profilePicture || user.profilePic)}
                     alt={`${user.firstName} ${user.lastName}`}
                   />
                 ) : (

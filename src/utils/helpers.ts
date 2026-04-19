@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './constants';
+
 /**
  * Shared helper utilities for FundEgypt
  * Providing consistency for data formatting and common logic.
@@ -70,4 +72,19 @@ export const cn = (...classes: (string | boolean | undefined | null)[]): string 
 export const truncateText = (text: string, length: number): string => {
     if (text.length <= length) return text;
     return text.substring(0, length).trim() + '...';
+};
+
+/**
+ * Ensures an image URL is absolute.
+ * If it's a relative path starting with /, it prepends the API_BASE_URL.
+ */
+export const getImageUrl = (path: string | null | undefined): string => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+
+    // Remove /api from the end of the base URL if it exists, as media is usually at /media
+    const baseUrl = API_BASE_URL.replace(/\/api$/, '');
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+
+    return `${baseUrl}${cleanPath}`;
 };

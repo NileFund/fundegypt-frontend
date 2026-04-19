@@ -2,11 +2,12 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { User as UserIcon, Heart } from 'lucide-react'
 import { getProject, getDonationSummary, cancelProject, getProjects } from '../../services/projectService'
 import { createDonation } from '../../services/donationService'
 import { useAuth } from '../../context/useAuth'
 import { formatEGP, formatDate, getPercent } from '../../utils/formatters'
+import { getImageUrl } from '../../utils/helpers'
 import ProgressBar from '../../components/ui/ProgressBar'
 import ProjectCard from '../../components/ui/ProjectCard'
 import TagBadge from '../../components/ui/TagBadge'
@@ -34,7 +35,6 @@ export default function ProjectDetailPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const queryClient = useQueryClient()
-  const [imgIndex, setImgIndex] = useState(0)
   const [amount, setAmount] = useState('')
   const [donationError, setDonationError] = useState('')
   const [donationSuccess, setDonationSuccess] = useState(false)
@@ -176,71 +176,92 @@ export default function ProjectDetailPage() {
   const canCancel = isOwner && percent < 25 && project.status === 'running'
 
   const images = Array.isArray(project.pictures) ? project.pictures.map(i => i.image) : []
-  const heroImg = images[imgIndex] ?? null
+  const heroImg = images[0] ?? null
   const canReport = user && !isOwner
 
   return (
-    <div className="pb-20">
-      <section className="relative h-125 w-full overflow-hidden">
-        {heroImg ? (
-          <img src={heroImg} alt={project.title} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full bg-linear-to-br from-brand-primary/30 to-brand-secondary/20" />
-        )}
+    <div className="bg-slate-50 min-h-screen pb-20 font-inter">
+      {/* Hero Section */}
+      <section className="max-w-7xl mx-auto px-6 pt-6">
+        <div className="relative h-[380px] w-full overflow-hidden rounded-[2.5rem] shadow-2xl">
+          {heroImg ? (
+            <img
+              src={getImageUrl(heroImg)}
+              alt={project.title}
+              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+            />
+          ) : (
+            <div className="w-full h-full bg-linear-to-br from-brand-primary/40 to-brand-secondary/30" />
+          )}
 
-        <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-linear-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 right-0 px-6 pb-10 max-w-7xl mx-auto">
-          <div className="flex flex-col gap-3">
-            {project.category && (
-              <span className="self-start bg-brand-primary text-white px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase">
-                {project.category.name}
-              </span>
-            )}
-            <h1 className="text-white text-4xl md:text-5xl font-bold tracking-tight max-w-3xl leading-tight">
-              {project.title}
-            </h1>
+          {/* Content Overlay */}
+          <div className="absolute inset-0 flex flex-col justify-end px-6 pb-12">
+            <div className="max-w-7xl mx-auto w-full">
+              <div className="flex flex-col gap-4 animate-in slide-in-from-bottom-6 duration-500">
+                {project.category && (
+                  <div className="flex items-center gap-2">
+                    <span className="bg-brand-primary/95 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg">
+                      {project.category.name}
+                    </span>
+                    <div className="h-px w-12 bg-white/30" />
+                  </div>
+                )}
+                <h1 className="text-white text-4xl md:text-6xl font-black tracking-tight max-w-4xl leading-[1.1] break-all drop-shadow-2xl">
+                  {project.title}
+                </h1>
+                <div className="flex items-center gap-4 text-white/80 text-sm font-medium">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                      <UserIcon size={14} className="text-white" />
+                    </div>
+                    <span>by <span className="text-white font-bold">{project.owner}</span></span>
+                  </div>
+                  <div className="w-1 h-1 rounded-full bg-white/30" />
+                  <span>Launched {formatDate(project.startTime)}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        {images.length > 1 && (
-          <div className="absolute bottom-8 right-6 flex gap-2">
-            <button
-              onClick={() => setImgIndex(i => (i === 0 ? images.length - 1 : i - 1))}
-              className="bg-white/20 backdrop-blur-md p-2.5 rounded-full text-white hover:bg-white/40 transition-colors"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button
-              onClick={() => setImgIndex(i => (i === images.length - 1 ? 0 : i + 1))}
-              className="bg-white/20 backdrop-blur-md p-2.5 rounded-full text-white hover:bg-white/40 transition-colors"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        )}
       </section>
 
-      <div className="max-w-7xl mx-auto px-6 mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10">
-        <div className="lg:col-span-8 space-y-8">
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8">
-            <h2 className="text-2xl font-semibold text-text-primary mb-5">About the Project</h2>
-            <p className="text-text-body leading-relaxed whitespace-pre-line text-sm">{project.details}</p>
+      <div className="max-w-7xl mx-auto px-6 mt-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Main Content Area */}
+        <div className="lg:col-span-8 space-y-10">
+          {/* About Section */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 p-8 md:p-10">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-8 w-1.5 bg-brand-primary rounded-full" />
+              <h2 className="text-2xl font-black text-slate-800 tracking-tight">About the Project</h2>
+            </div>
+
+            <p className="text-slate-600 leading-[1.8] break-words whitespace-pre-line text-lg font-medium tracking-tight">
+              {project.details}
+            </p>
 
             {project.tags?.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-6 pt-6 border-t border-gray-100">
-                {Array.isArray(project.tags) && project.tags.map(tag => <TagBadge key={tag.id} tag={tag.name} />)}
+              <div className="flex flex-wrap gap-2.5 mt-10 pt-8 border-t border-slate-100">
+                {Array.isArray(project.tags) && project.tags.map(tag => (
+                  <TagBadge key={tag.id} tag={tag.name} />
+                ))}
               </div>
             )}
           </div>
 
-          <RatingSection
-            projectId={Number(id)}
-            isOwner={isOwner}
-            isAuthenticated={!!user}
-          />
+          {/* Rating Section */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-lg p-2 overflow-hidden">
+            <RatingSection
+              projectId={Number(id)}
+              isOwner={isOwner}
+              isAuthenticated={!!user}
+            />
+          </div>
 
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-8">
+          {/* Comment Section */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-lg px-8">
             <CommentSection
               comments={commentsData || []}
               isLoading={commentsLoading || addCommentMutation.isPending}
@@ -254,154 +275,204 @@ export default function ProjectDetailPage() {
               onReply={async (parentCommentId, content) => {
                 await replyMutation.mutateAsync({ parentCommentId, content })
               }}
-              title="Project Discussion"
+              title="Campaign Discussion"
             />
           </div>
         </div>
 
+        {/* Sidebar - Donation Card */}
         <div className="lg:col-span-4">
-          <div className="sticky top-24 bg-white rounded-xl border-2 border-brand-primary/20 shadow-lg p-7 space-y-6">
-            <div className="space-y-2">
-              <div className="flex justify-between items-end">
-                <span className="text-3xl font-bold text-text-primary">{formatEGP(raised)}</span>
-                <span className="text-sm font-medium text-brand-primary">{percent}% of target</span>
+          <div className="sticky top-28 bg-white rounded-3xl border-2 border-slate-100 shadow-2xl shadow-slate-300/50 p-8 space-y-8 animate-in slide-in-from-right-8 duration-700 delay-200">
+            {/* Progress Stats */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-baseline">
+                <span className="text-4xl font-black text-slate-900 tracking-tighter">
+                  {formatEGP(raised)}
+                </span>
+                <span className="text-sm font-bold text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full">
+                  {percent}%
+                </span>
               </div>
+
               <ProgressBar percent={percent} />
-              <div className="flex justify-between text-xs font-semibold text-text-muted uppercase tracking-wider pt-0.5">
-                <span>Raised</span>
+
+              <div className="flex justify-between text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">
+                <span>Raised so far</span>
                 <span>Goal: {formatEGP(target)}</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 py-4 border-y border-gray-100">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-text-primary">{formatEGP(remaining)}</p>
-                <p className="text-xs text-text-muted font-medium mt-0.5">Remaining</p>
+            {/* Quick Stats Grid */}
+            <div className="grid grid-cols-3 gap-2 py-6 border-y border-slate-100">
+              <div className="space-y-1">
+                <p className="text-xl font-black text-slate-800 tracking-tighter">{formatEGP(remaining)}</p>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Remaining</p>
               </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-text-primary">{daysLeft(project.endTime)}</p>
-                <p className="text-xs text-text-muted font-medium mt-0.5">Days Left</p>
+              <div className="space-y-1 text-center">
+                <p className="text-xl font-black text-slate-800 tracking-tighter">{summary?.donors_count || 0}</p>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Donations</p>
+              </div>
+              <div className="space-y-1 text-right">
+                <p className="text-xl font-black text-slate-800 tracking-tighter">{daysLeft(project.endTime)}</p>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Days Left</p>
               </div>
             </div>
 
+            {/* Action Section */}
             {project.status === 'running' && (
-              !user ? (
-                <p className="text-sm text-text-muted text-center">
-                  <a href="/login" className="text-brand-primary font-semibold hover:underline">Log in</a> to donate.
-                </p>
-              ) : (
-                <form onSubmit={handleDonate} className="space-y-3">
-                  <input
-                    type="number"
-                    min={10}
-                    placeholder="Amount in EGP"
-                    value={amount}
-                    onChange={e => setAmount(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-brand-primary transition-colors"
-                  />
-                  {donationError && <p className="text-xs text-danger">{donationError}</p>}
-                  {donationSuccess && <p className="text-xs text-brand-primary font-medium">Thank you for your donation!</p>}
-                  <button
-                    type="submit"
-                    disabled={donateMutation.isPending}
-                    className="w-full py-4 bg-brand-primary hover:bg-brand-secondary text-white rounded-xl font-bold text-lg transition-all shadow-md active:scale-[0.98] disabled:opacity-60"
-                  >
-                    {donateMutation.isPending ? 'Processing…' : 'Donate Now'}
-                  </button>
-                </form>
-              )
+              <div className="space-y-4">
+                {!user ? (
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                    <p className="text-sm text-slate-600">
+                      <a href="/login" className="text-brand-primary font-bold hover:underline decoration-2 underline-offset-4">Sign in</a> to contribute to this cause.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleDonate} className="space-y-4">
+                    <div className="relative group">
+                      <input
+                        type="number"
+                        min={10}
+                        placeholder="Contribution amount"
+                        value={amount}
+                        onChange={e => setAmount(e.target.value)}
+                        className="w-full pl-6 pr-16 py-4 rounded-2xl bg-slate-50 border-2 border-slate-100 text-slate-900 font-bold focus:border-brand-primary focus:bg-white outline-none transition-all placeholder:text-slate-400"
+                      />
+                      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm tracking-widest">EGP</span>
+                    </div>
+
+                    {donationError && (
+                      <div className="p-3 bg-red-50 border border-red-100 rounded-xl">
+                        <p className="text-xs text-red-600 font-bold text-center">{donationError}</p>
+                      </div>
+                    )}
+
+                    {donationSuccess && (
+                      <div className="p-3 bg-green-50 border border-green-100 rounded-xl">
+                        <p className="text-xs text-green-600 font-bold text-center">Thank you for your support! ❤️</p>
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={donateMutation.isPending}
+                      className="w-full py-5 bg-brand-primary hover:bg-brand-primary/90 text-white rounded-2xl font-black text-lg transition-all shadow-[0_8px_30px_rgb(31,111,95,0.4)] hover:shadow-[0_8px_40px_rgb(31,111,95,0.6)] active:scale-[0.98] disabled:opacity-60 disabled:shadow-none flex items-center justify-center gap-3"
+                    >
+                      {donateMutation.isPending ? (
+                        <>
+                          <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Processing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Heart size={20} fill="currentColor" />
+                          <span>Donate Now</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+              </div>
             )}
 
-            <div className="text-xs text-text-muted space-y-1 pt-1">
-              <div className="flex justify-between">
-                <span>Start</span>
-                <span className="font-medium text-text-body">{formatDate(project.startTime)}</span>
+            {/* Campaign Meta */}
+            <div className="pt-2 space-y-4">
+              <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+                  <UserIcon size={18} className="text-slate-400" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Campaign by</p>
+                  <p className="text-sm font-black text-slate-800">{project.owner}</p>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span>End</span>
-                <span className="font-medium text-text-body">{formatDate(project.endTime)}</span>
-              </div>
-            </div>
 
-            <div className="border-t border-gray-100 pt-4">
-              <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-1">Campaign by</p>
-              <p className="text-sm font-medium text-text-primary truncate">{project.owner}</p>
-            </div>
-            {canReport && (
-              <div className="border-t border-gray-100 pt-4">
+              {canReport && (
                 <button
                   onClick={() => setShowReportDialog(true)}
-                  className="w-full flex items-center justify-center gap-2 text-sm text-red-500 hover:text-red-600 transition-colors">
-
-                  <Flag size={16} />
-                  Report Project
+                  className="w-full flex items-center justify-center gap-2 py-3 text-xs font-bold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest"
+                >
+                  <Flag size={14} />
+                  Report Campaign
                 </button>
-                {reportSuccess && (
-                  <div className="mt-3 p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
-                    {reportSuccess}
-                  </div>
-                )}
-              </div>
-            )}
-            {isOwner && (
-              <div className="flex flex-col gap-2 border-t border-gray-100 pt-4">
-                <Button variant="secondary" onClick={() => navigate(`/projects/${id}/edit`)}>
-                  Edit Campaign
-                </Button>
-                {canCancel && (
-                  <Button variant="danger" loading={cancelMutation.isPending} onClick={() => cancelMutation.mutate()}>
-                    Cancel Campaign
+              )}
+              {reportSuccess && (
+                <div className="p-3 bg-green-50 border border-green-100 rounded-xl">
+                  <p className="text-xs text-green-600 font-bold text-center">{reportSuccess}</p>
+                </div>
+              )}
+
+              {isOwner && (
+                <div className="flex flex-col gap-3">
+                  <Button
+                    variant="secondary"
+                    className="w-full rounded-2xl py-4 bg-slate-100 hover:bg-slate-200 border-none text-slate-800 font-bold"
+                    onClick={() => navigate(`/projects/${id}/edit`)}
+                  >
+                    Edit Workspace
                   </Button>
-                )}
-                {cancelError && <Alert type="error" message={cancelError} />}
-              </div>
-            )}
+                  {canCancel && (
+                    <Button
+                      variant="danger"
+                      className="w-full rounded-2xl py-4"
+                      loading={cancelMutation.isPending}
+                      onClick={() => cancelMutation.mutate()}
+                    >
+                      Cancel Campaign
+                    </Button>
+                  )}
+                  {cancelError && <Alert type="error" message={cancelError} />}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {similar.length > 0 && (
-        <section className="max-w-7xl mx-auto px-6 mt-16">
-          <div className="mb-8">
-            <h3 className="text-2xl font-bold text-text-primary">Similar Projects</h3>
-            <p className="text-sm text-text-muted mt-1">Continue supporting similar campaigns.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Array.isArray(similar) && similar.map(p => <ProjectCard key={p.id} project={p} />)}
-          </div>
-        </section>
-      )}
+      {
+        similar.length > 0 && (
+          <section className="max-w-7xl mx-auto px-6 mt-24">
+            <div className="flex items-center gap-4 mb-10">
+              <div className="h-8 w-1.5 bg-slate-300 rounded-full" />
+              <h3 className="text-3xl font-black text-slate-800 tracking-tighter">Recommended For You</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {Array.isArray(similar) && similar.map(p => <ProjectCard key={p.id} project={p} />)}
+            </div>
+          </section>
+        )
+      }
+
       {showReportDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md space-y-4">
-            <h3 className="text-lg font-semibold text-text-primary">
-              Report this project
-            </h3>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-200">
+            <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2">Report Campaign</h3>
+            <p className="text-slate-500 text-sm mb-6 font-medium">Help us keep FundEgypt safe. Tell us why you're reporting this project.</p>
 
             <textarea
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
-              placeholder="Optional: describe the issue (spam, fraud, etc.)"
-              className="w-full border border-gray-200 rounded-lg p-3 text-sm"
-              rows={3}
+              placeholder="Provide a reason (privacy, fraud, spam...)"
+              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 text-sm outline-none focus:border-brand-primary transition-all min-h-[120px] font-medium"
             />
 
             {reportError && (
-              <p className="text-xs text-red-500">{reportError}</p>
+              <p className="mt-3 text-xs text-red-500 font-bold">{reportError}</p>
             )}
 
-            <div className="flex gap-2 justify-end">
+            <div className="flex gap-3 mt-8">
               <Button
                 variant="secondary"
+                className="flex-1 rounded-2xl py-4 font-bold"
                 onClick={() => setShowReportDialog(false)}
               >
                 Cancel
               </Button>
               <Button
-                className="bg-red-500 hover:bg-red-600 text-white"
+                className="flex-1 rounded-2xl py-4 bg-red-500 hover:bg-red-600 text-white border-none font-bold shadow-lg shadow-red-200"
                 onClick={handleReportProject}
               >
-                Submit Report
+                Submit
               </Button>
             </div>
           </div>

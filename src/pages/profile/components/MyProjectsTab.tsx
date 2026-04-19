@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getMyProjects } from "../../../services/projectService";
 import { type Project } from "../../../types";
 import { ROUTES } from "../../../utils/constants";
+import { getImageUrl } from "../../../utils/helpers";
 
 export default function MyProjectsTab() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -15,8 +16,10 @@ export default function MyProjectsTab() {
     const fetchMyProjects = async () => {
       try {
         setIsLoading(true);
-        const response = await getMyProjects();
-        setProjects(response.results || response);
+        const data = await getMyProjects();
+        // Handle both paginated response and direct array
+        const projectList = Array.isArray(data) ? data : (data.results || []);
+        setProjects(projectList);
       } catch (err) {
         console.error("Failed to load campaigns:", err);
         setError("Failed to load your campaigns. Please try again later.");
@@ -114,17 +117,19 @@ export default function MyProjectsTab() {
                 key={project.id}
                 className="bg-white rounded-xl border border-brand-mint shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-200 overflow-hidden flex flex-col group cursor-pointer"
                 onClick={() => navigate(`${ROUTES.PROJECT_DETAIL.replace(":id", project.id.toString())}`)}>
-                {/* 1. Image Section (Closed properly now) */}
-                <div className="relative h-48 w-full bg-surface-page overflow-hidden flex items-center justify-center">
-                  {displayImage ? (
-                    <img
-                      src={displayImage}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <ImageIcon size={48} className="text-[#CBD5E0]" />
-                  )}
+                {/* 1. Image Section (Compact & Rounded) */}
+                <div className="p-3">
+                  <div className="relative h-48 w-full bg-slate-100 rounded-2xl overflow-hidden flex items-center justify-center">
+                    {displayImage ? (
+                      <img
+                        src={getImageUrl(displayImage)}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <ImageIcon size={48} className="text-[#CBD5E0]" />
+                    )}
+                  </div>
                 </div>
 
                 {/* 2. Content Section (Now outside the image!) */}

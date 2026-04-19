@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-import { X, Lock } from "lucide-react";
+import { X, Lock, Camera, User as UserIcon } from "lucide-react";
 import { EGYPTIAN_PHONE_REGEX } from "../../../utils/constants";
-import { useAuth } from "../../../context/useAuth"; // Adjust path if needed
-import { updateProfile } from "../../../services/authService"; // Adjust path if needed
+import { useAuth } from "../../../context/useAuth";
+import axios from "axios";
+import { updateProfile } from "../../../services/authService";
+import { getImageUrl } from "../../../utils/helpers";
 
 interface EditProfileModalProps {
   onClose: () => void;
@@ -25,6 +27,28 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    getImageUrl(user?.profilePicture || user?.profilePic)
+  );
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -64,6 +88,7 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
       if (formData.birthdate) data.append("birthdate", formData.birthdate);
       if (formData.country) data.append("country", formData.country);
       if (formData.facebookProfile) data.append("facebook_profile", formData.facebookProfile);
+      if (image) data.append("profile_picture", image);
 
       // Call the real API
       await updateProfile(data);
@@ -71,7 +96,29 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
       // Reload the window to refresh the global AuthContext with the new data
       window.location.reload();
     } catch (error: any) {
-      setErrors({ submit: error.response?.data?.detail || "Failed to update profile. Please try again." });
+      console.error("Profile update failed:", error);
+
+      if (axios.isAxiosError(error)) {
+        const errorData = error.response?.data;
+        if (errorData && typeof errorData === 'object') {
+          const mappedErrors: Record<string, string> = {};
+          Object.keys(errorData).forEach(key => {
+            let fieldName = key;
+            if (key === 'first_name') fieldName = 'firstName';
+            else if (key === 'last_name') fieldName = 'lastName';
+            else if (key === 'facebook_profile') fieldName = 'facebookProfile';
+
+            mappedErrors[fieldName] = Array.isArray(errorData[key])
+              ? errorData[key][0]
+              : (errorData[key]?.toString() || "Invalid value");
+          });
+          setErrors(mappedErrors);
+        } else {
+          setErrors({ submit: error.response?.data?.detail || "Failed to update profile. Please try again." });
+        }
+      } else {
+        setErrors({ submit: "Failed to update profile. Please try again." });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -102,6 +149,41 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
         {/* Scrollable Body */}
         <div className="overflow-y-auto p-6 custom-scrollbar">
           <form id="edit-profile-form" onSubmit={handleSubmit} className="space-y-6">
+            {/* Profile Picture Upload */}
+            <div className="flex flex-col items-center space-y-4 py-2">
+              <div className="relative group">
+                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-brand-primary/20 bg-surface-page flex items-center justify-center shadow-inner">
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt="Profile Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <UserIcon size={40} className="text-text-muted" />
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={triggerFileInput}
+                  disabled={isLoading}
+                  className="absolute bottom-0 right-0 p-2 bg-brand-primary text-white rounded-full shadow-lg hover:bg-brand-success transition-all active:scale-95 z-10"
+                >
+                  <Camera size={16} />
+                </button>
+              </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageChange}
+                accept="image/*"
+                className="hidden"
+              />
+              <p className="text-[11px] text-text-muted text-center max-w-[180px]">
+                Click the camera icon to update your profile photo
+              </p>
+            </div>
+
             {/* Name Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
@@ -182,8 +264,12 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
                   value={formData.birthdate}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-colors"
+                  className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:ring-2 transition-colors ${errors.birthdate
+                    ? "border-danger focus:ring-danger/20"
+                    : "border-gray-200 focus:border-brand-primary focus:ring-brand-primary/20"
+                    }`}
                 />
+                {errors.birthdate && <p className="mt-1 text-xs text-danger">{errors.birthdate}</p>}
               </div>
             </div>
 
@@ -198,12 +284,17 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
                   value={formData.country}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-colors">
+                  className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:ring-2 transition-colors ${errors.country
+                    ? "border-danger focus:ring-danger/20"
+                    : "border-gray-200 focus:border-brand-primary focus:ring-brand-primary/20"
+                    }`}
+                >
                   <option value="Egypt">Egypt</option>
                   <option value="Saudi Arabia">Saudi Arabia</option>
                   <option value="UAE">UAE</option>
                   <option value="Other">Other</option>
                 </select>
+                {errors.country && <p className="mt-1 text-xs text-danger">{errors.country}</p>}
               </div>
               <div>
                 <label className="block text-xs font-bold text-text-body/70 uppercase tracking-widest mb-2">
@@ -214,8 +305,12 @@ export default function EditProfileModal({ onClose }: EditProfileModalProps) {
                   value={formData.facebookProfile}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 transition-colors"
+                  className={`w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-text-body focus:outline-none focus:ring-2 transition-colors ${errors.facebookProfile
+                    ? "border-danger focus:ring-danger/20"
+                    : "border-gray-200 focus:border-brand-primary focus:ring-brand-primary/20"
+                    }`}
                 />
+                {errors.facebookProfile && <p className="mt-1 text-xs text-danger">{errors.facebookProfile}</p>}
               </div>
             </div>
 
